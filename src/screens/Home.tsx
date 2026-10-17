@@ -60,8 +60,9 @@ export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
 
   return (
     <main className="screen home">
-      <SpeechBubble lines={lines} />
+      <LevelGauge experience={pet.experience} level={pet.level} />
       <div className={`pet-stage room ${room.id}`}>
+        <SpeechBubble lines={lines} />
         <Pet level={pet.level} branch={pet.branch} expression={expression} />
         {heartKey > 0 && (
           <div className="hearts" key={heartKey} aria-hidden="true">
@@ -89,8 +90,6 @@ export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
           </div>
         </section>
       )}
-
-      <LevelGauge experience={pet.experience} level={pet.level} />
 
       <button className="primary" onClick={onConsult}>
         ペットに相談する
