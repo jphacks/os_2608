@@ -44,6 +44,9 @@ export type PetState = {
   affection: Affection
   // いま表示しているお部屋
   roomId: string
+  // 合計ログイン日数（アプリを開いた日を、端末の日付で1日と数える）と、最後に数えた日付 YYYY-MM-DD
+  loginDays: number
+  lastLoginDate: string
 }
 
 export type Expression = 'normal' | 'happy' | 'worried' | 'rest'

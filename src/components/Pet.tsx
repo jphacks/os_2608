@@ -32,6 +32,7 @@ export function Pet({ level, branch, expression, scale = 6 }: Props) {
       width={size}
       height={size}
       alt="ペット"
+      draggable={false}
     />
   )
 }
