@@ -4,7 +4,7 @@ import { Home } from './screens/Home'
 import { Rooms } from './screens/Rooms'
 import { applyConsult } from './growth'
 import { addRecord, loadPetState, savePetState } from './storage'
-import type { Category, Intensity, PetState } from './types'
+import type { Answer, PetState } from './types'
 
 type Screen = 'home' | 'consult' | 'rooms'
 
@@ -24,9 +24,9 @@ export function App() {
     setPet(next)
   }
 
-  const onFinishConsult = (categories: Category[], intensity: Intensity | undefined) => {
-    addRecord({ id: newId(), createdAt: new Date().toISOString(), categories, intensity })
-    const result = applyConsult(pet, categories)
+  const onFinishConsult = (answers: Answer[]) => {
+    addRecord({ id: newId(), createdAt: new Date().toISOString(), answers })
+    const result = applyConsult(pet, answers)
     updatePet(result.pet)
     return result
   }
