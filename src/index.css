@@ -300,3 +300,32 @@ button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.intensity-row {
+  margin: 0;
+  padding: 0;
+  border: none;
+  min-width: 0;
+}
+
+.intensity-row legend {
+  padding: 0 0 8px;
+  font-weight: 700;
+}
+
+.intensity-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.choices .intensity-options button {
+  text-align: center;
+  padding: 0 4px;
+  font-size: 0.9rem;
+}
+
+.choices .intensity-options button[aria-checked='true'] {
+  background: #fff1d6;
+  border-color: var(--accent);
+}

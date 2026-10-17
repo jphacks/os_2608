@@ -12,12 +12,12 @@ import {
   responseLines,
 } from '../dialogue'
 import type { ConsultResult } from '../growth'
-import type { Category, Intensity, PetState } from '../types'
+import type { Answer, Category, Intensity, PetState } from '../types'
 
 type Props = {
   pet: PetState
   // 相談の内容を記録し、ペットの状態に反映した結果を返す
-  onFinish: (categories: Category[], intensity: Intensity | undefined) => ConsultResult
+  onFinish: (answers: Answer[]) => ConsultResult
   onDone: () => void
 }
 
@@ -26,11 +26,13 @@ type Step = 'category' | 'intensity' | 'response'
 export function Consult({ pet: current, onFinish, onDone }: Props) {
   const [step, setStep] = useState<Step>('category')
   const [selected, setSelected] = useState<Category[]>([])
-  const [intensity, setIntensity] = useState<Intensity>()
+  // 選んだ出来事ごとのつらさ
+  const [intensities, setIntensities] = useState<Partial<Record<Category, Intensity>>>({})
+  const [answers, setAnswers] = useState<Answer[]>([])
   const [result, setResult] = useState<ConsultResult>()
-  const finish = (categories: Category[], strength: Intensity | undefined) => {
-    setIntensity(strength)
-    setResult(onFinish(categories, strength))
+  const finish = (finished: Answer[]) => {
+    setAnswers(finished)
+    setResult(onFinish(finished))
     setStep('response')
   }
 
@@ -46,9 +48,9 @@ export function Consult({ pet: current, onFinish, onDone }: Props) {
     const { pet, leveledUp } = result
     return (
       <main className="screen consult">
-        <SpeechBubble lines={responseLines(selected, intensity, leveledUp)} />
+        <SpeechBubble lines={responseLines(answers, leveledUp)} />
         <div className="pet-stage">
-          <Pet level={pet.level} branch={pet.branch} expression={responseExpression(intensity)} />
+          <Pet level={pet.level} branch={pet.branch} expression={responseExpression(answers)} />
         </div>
         <LevelGauge experience={pet.experience} level={pet.level} />
         <button className="primary" onClick={onDone}>
@@ -81,10 +83,22 @@ export function Consult({ pet: current, onFinish, onDone }: Props) {
             </button>
           ))}
         {step === 'intensity' &&
-          intensityOptions.map((o) => (
-            <button key={o.value} onClick={() => finish(selected, o.value)}>
-              {o.label}
-            </button>
+          selected.map((category) => (
+            <fieldset key={category} className="intensity-row">
+              <legend>{categoryOptions.find((o) => o.value === category)?.label}</legend>
+              <div className="intensity-options" role="radiogroup">
+                {intensityOptions.map((o) => (
+                  <button
+                    key={o.value}
+                    role="radio"
+                    aria-checked={intensities[category] === o.value}
+                    onClick={() => setIntensities((current) => ({ ...current, [category]: o.value }))}
+                  >
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
           ))}
       </div>
       {step === 'category' && (
@@ -93,9 +107,18 @@ export function Consult({ pet: current, onFinish, onDone }: Props) {
           disabled={selected.length === 0}
           onClick={() => {
             // 「今日は大丈夫だった」だけのときは、つらさを聞かない
-            if (selected.every((c) => c === 'good_day')) finish(selected, undefined)
+            if (selected.every((c) => c === 'good_day')) finish(selected.map((category) => ({ category })))
             else setStep('intensity')
           }}
+        >
+          {categoryConfirm}
+        </button>
+      )}
+      {step === 'intensity' && (
+        <button
+          className="primary"
+          disabled={selected.some((c) => !intensities[c])}
+          onClick={() => finish(selected.map((category) => ({ category, intensity: intensities[category] })))}
         >
           {categoryConfirm}
         </button>
