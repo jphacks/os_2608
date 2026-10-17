@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { PointerEvent } from 'react'
 import { DevPanel } from '../components/DevPanel'
 import { LevelGauge } from '../components/LevelGauge'
@@ -22,6 +22,8 @@ const SHOW_LOOK_BUTTON = false
 // なでる動き: 左右に何px動かすと「1回なぞった」とするか、何回なぞると1回なでたことにするか
 const STROKE_DISTANCE = 24
 const STROKES_PER_PAT = 4
+// なでてから親密度ゲージを消すまでの時間
+const AFFECTION_HIDE_MS = 2000
 
 export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
   const [lines, setLines] = useState<string[]>([greeting])
@@ -30,6 +32,9 @@ export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
   const [showAffection, setShowAffection] = useState(false)
   // ハートを出し直すたびに key を変えて、アニメーションを最初から再生する
   const [heartKey, setHeartKey] = useState(0)
+  const hideTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+  // 別の画面に移るときは、残っているタイマーを止める
+  useEffect(() => () => clearTimeout(hideTimer.current), [])
   // 開発者モード: レベルゲージを5回続けてタップすると開く
   const [devOpen, setDevOpen] = useState(false)
   const [devTaps, setDevTaps] = useState(0)
@@ -46,6 +51,9 @@ export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
     const result = pat(pet.affection)
     onChangePet({ ...pet, affection: result.affection })
     setShowAffection(true)
+    // 2秒以内にまたなでたら、そこから数え直す
+    clearTimeout(hideTimer.current)
+    hideTimer.current = setTimeout(() => setShowAffection(false), AFFECTION_HIDE_MS)
     if (result.kind === 'limit') {
       setLines([petLimitLine])
       setExpression('normal')
