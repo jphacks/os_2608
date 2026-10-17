@@ -1,0 +1,8 @@
+node_modules
+dist
+*.local
+.DS_Store
+# 個人のヘルスケアデータを誤って追加しないため
+*.zip
+export.xml
+*.tsbuildinfo
