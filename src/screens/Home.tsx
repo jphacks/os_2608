@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { PointerEvent } from 'react'
 import { DevPanel } from '../components/DevPanel'
+import { HouseIcon } from '../components/HouseIcon'
 import { LevelGauge } from '../components/LevelGauge'
 import { Pet } from '../components/Pet'
 import { SpeechBubble } from '../components/SpeechBubble'
@@ -103,7 +104,7 @@ export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
     <main className={`screen home room ${room.id}`}>
       <header className="topbar">
         <button className="icon-button" onClick={onRooms} aria-label="おへやをえらぶ">
-          <span className="door" aria-hidden="true" />
+          <HouseIcon />
         </button>
         <div className="topbar-gauge" onClick={onGaugeTap}>
           <LevelGauge experience={pet.experience} level={pet.level} />
@@ -122,6 +123,23 @@ export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
         onPointerUp={onPointerEnd}
         onPointerCancel={onPointerEnd}
       >
+        {showAffection && (
+          <section className="status affection" aria-label="なかよしゲージ">
+            <div className="status-row">
+              <span className="level">なかよし Lv {level}</span>
+              <span className="exp-label">♥</span>
+            </div>
+            <div
+              className="exp-bar"
+              role="progressbar"
+              aria-valuenow={Math.round(gaugeRatio(pet.affection.pats) * 100)}
+              aria-valuemin={0}
+              aria-valuemax={100}
+            >
+              <div className="exp-fill heart" style={{ width: `${gaugeRatio(pet.affection.pats) * 100}%` }} />
+            </div>
+          </section>
+        )}
         <SpeechBubble lines={lines} />
         <Pet level={pet.level} branch={pet.branch} expression={expression} />
         {heartKey > 0 && (
@@ -133,30 +151,12 @@ export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
         )}
       </div>
 
-      {showAffection && (
-        <section className="status affection" aria-label="なかよしゲージ">
-          <div className="status-row">
-            <span className="level">なかよし Lv {level}</span>
-            <span className="exp-label">♥</span>
-          </div>
-          <div
-            className="exp-bar"
-            role="progressbar"
-            aria-valuenow={Math.round(gaugeRatio(pet.affection.pats) * 100)}
-            aria-valuemin={0}
-            aria-valuemax={100}
-          >
-            <div className="exp-fill heart" style={{ width: `${gaugeRatio(pet.affection.pats) * 100}%` }} />
-          </div>
-        </section>
-      )}
-
       {devOpen && <DevPanel pet={pet} onChangePet={onChangePet} onClose={() => setDevOpen(false)} />}
 
       <footer className="home-bottom">
         {SHOW_LOOK_BUTTON && <button onClick={onLook}>ようすを見る</button>}
         <button className="primary" onClick={onConsult}>
-          ペットに相談する
+          ストレスを食べてもらう
         </button>
         <p className="note">
           記録はこの端末のブラウザ内に保存されます。これは医療的な診断を行うアプリではなく、日々の気持ちを振り返るためのサポートです。
