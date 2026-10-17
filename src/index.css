@@ -42,8 +42,6 @@ button {
 .bubble,
 .status,
 .primary,
-.secondary,
-.sub-actions button,
 .choices button,
 .room-item {
   /* 角を1ドットぶん欠いた、ドット絵風の枠 */
@@ -128,7 +126,6 @@ button {
 }
 
 .primary,
-.sub-actions button,
 .choices button {
   min-height: 48px;
   border: 4px solid var(--line);
@@ -143,17 +140,6 @@ button {
   font-weight: 700;
   font-size: 1.1rem;
   min-height: 56px;
-}
-
-.sub-actions {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-
-.sub-actions button {
-  font-size: 0.9rem;
-  padding: 0 4px;
 }
 
 .choices {
@@ -249,13 +235,6 @@ button:focus-visible {
 
 .exp-fill.heart {
   background: #e0546b;
-}
-
-.secondary {
-  min-height: 48px;
-  border: 4px solid var(--line);
-  background: var(--panel);
-  cursor: pointer;
 }
 
 .room-list {
@@ -369,4 +348,116 @@ button:disabled {
 .choices .intensity-options button[aria-checked='true'] {
   background: #fff1d6;
   border-color: var(--accent);
+}
+
+/* ホーム: 画面全体がペットのお部屋 */
+.screen.home.room {
+  position: relative;
+  border: none;
+  min-height: 100dvh;
+  padding: calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));
+  gap: 8px;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.topbar-gauge {
+  flex: 1;
+  min-width: 0;
+}
+
+.topbar .status {
+  padding: 6px 10px;
+}
+
+.topbar .status-row {
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+}
+
+.icon-button,
+.login-days {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  background: var(--panel);
+  border: 4px solid var(--line);
+}
+
+.icon-button {
+  cursor: pointer;
+  padding: 0;
+  display: grid;
+  place-items: center;
+}
+
+/* お部屋のアイコン: ドアの形 */
+.door {
+  width: 18px;
+  height: 26px;
+  border: 4px solid var(--line);
+  background: var(--accent);
+}
+
+.login-days {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-size: 0.65rem;
+  line-height: 1.3;
+}
+
+.home .pet-stage {
+  flex: 1;
+  position: relative;
+  padding: 0 0 12%;
+  /* なでる動きを、画面のスクロールに取られないようにする */
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.home .pet {
+  margin-top: 0;
+}
+
+.home .bubble-wrap {
+  width: 90%;
+  margin-bottom: 8px;
+}
+
+.home .status.affection {
+  position: absolute;
+  left: 50%;
+  bottom: 150px;
+  width: 60%;
+  transform: translateX(-50%);
+}
+
+.home-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.home-bottom .note {
+  font-size: 0.65rem;
+  line-height: 1.4;
+  background: rgba(255, 255, 255, 0.75);
+  padding: 4px 6px;
+}
+
+.home .dev-panel {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 120px;
+  background: var(--panel);
+  z-index: 10;
 }

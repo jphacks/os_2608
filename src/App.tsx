@@ -3,6 +3,7 @@ import { Consult } from './screens/Consult'
 import { Home } from './screens/Home'
 import { Rooms } from './screens/Rooms'
 import { applyConsult } from './growth'
+import { recordLogin } from './login'
 import { addRecord, loadPetState, savePetState } from './storage'
 import type { Answer, PetState } from './types'
 
@@ -17,7 +18,12 @@ function newId() {
 // GitHub Pages では直接URLを開くと404になりやすいため、ルーターは使わず状態で画面を切り替える
 export function App() {
   const [screen, setScreen] = useState<Screen>('home')
-  const [pet, setPet] = useState(loadPetState)
+  const [pet, setPet] = useState(() => {
+    const loaded = loadPetState()
+    const next = recordLogin(loaded)
+    if (next !== loaded) savePetState(next)
+    return next
+  })
 
   const updatePet = (next: PetState) => {
     savePetState(next)
