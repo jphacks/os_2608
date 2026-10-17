@@ -4,14 +4,12 @@ import { SpeechBubble } from '../components/SpeechBubble'
 import {
   categoryOptions,
   categoryQuestion,
-  copingOptions,
-  copingQuestion,
   intensityOptions,
   intensityQuestion,
   responseExpression,
   responseLines,
 } from '../dialogue'
-import type { Category, CopingAction, Intensity, Level, StressRecord } from '../types'
+import type { Category, Intensity, Level, StressRecord } from '../types'
 
 type Props = {
   level: Level
@@ -19,7 +17,7 @@ type Props = {
   onDone: () => void
 }
 
-type Step = 'category' | 'intensity' | 'coping' | 'response'
+type Step = 'category' | 'intensity' | 'response'
 
 function newId() {
   return typeof crypto !== 'undefined' && 'randomUUID' in crypto
@@ -30,17 +28,14 @@ function newId() {
 export function Consult({ level, onSave, onDone }: Props) {
   const [step, setStep] = useState<Step>('category')
   const [category, setCategory] = useState<Category>()
-  const [intensity, setIntensity] = useState<Intensity>()
   const [record, setRecord] = useState<StressRecord>()
 
-  const finish = (copingAction: CopingAction) => {
-    if (!category) return
+  const finish = (category: Category, intensity?: Intensity) => {
     const saved: StressRecord = {
       id: newId(),
       createdAt: new Date().toISOString(),
       category,
-      intensity: category === 'good_day' ? undefined : intensity,
-      copingAction,
+      intensity,
     }
     onSave(saved)
     setRecord(saved)
@@ -61,8 +56,7 @@ export function Consult({ level, onSave, onDone }: Props) {
     )
   }
 
-  const question =
-    step === 'category' ? categoryQuestion : step === 'intensity' ? intensityQuestion : copingQuestion
+  const question = step === 'category' ? categoryQuestion : intensityQuestion
 
   return (
     <main className="screen consult">
@@ -76,9 +70,13 @@ export function Consult({ level, onSave, onDone }: Props) {
             <button
               key={o.value}
               onClick={() => {
-                setCategory(o.value)
-                // 「今日は大丈夫だった」のときは強さを聞かない
-                setStep(o.value === 'good_day' ? 'coping' : 'intensity')
+                // 「今日は大丈夫だった」のときは強さを聞かず、そのまま記録する
+                if (o.value === 'good_day') {
+                  finish(o.value)
+                } else {
+                  setCategory(o.value)
+                  setStep('intensity')
+                }
               }}
             >
               {o.label}
@@ -88,17 +86,8 @@ export function Consult({ level, onSave, onDone }: Props) {
           intensityOptions.map((o) => (
             <button
               key={o.value}
-              onClick={() => {
-                setIntensity(o.value)
-                setStep('coping')
-              }}
+              onClick={() => category && finish(category, o.value)}
             >
-              {o.label}
-            </button>
-          ))}
-        {step === 'coping' &&
-          copingOptions.map((o) => (
-            <button key={o.value} onClick={() => finish(o.value)}>
               {o.label}
             </button>
           ))}

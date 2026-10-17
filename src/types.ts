@@ -4,9 +4,6 @@ export type Category = 'commute' | 'task' | 'relationships' | 'tired' | 'good_da
 // つらさの強さ（第2問）。「今日は大丈夫だった」のときは聞かない
 export type Intensity = 1 | 2 | 3
 
-// 今どうしたいか（第3問）
-export type CopingAction = 'rest' | 'talk' | 'walk' | 'unsure'
-
 // ストレスの4分類。アプリ内部で判定し、成長の方向に使う（判定ルールは未定）
 export type StressType = 'physical' | 'chemical' | 'psychological' | 'biological'
 
@@ -15,7 +12,6 @@ export type StressRecord = {
   createdAt: string
   category: Category
   intensity?: Intensity
-  copingAction: CopingAction
   stressType?: StressType
 }
 
