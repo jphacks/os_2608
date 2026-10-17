@@ -7,10 +7,7 @@ const PET_KEY = 'pet-stress-app/v1/pet'
 export const initialPetState: PetState = {
   level: 1,
   experience: 0,
-  acceptance: 0,
-  recovery: 0,
-  connection: 0,
-  affection: 0,
+  stats: { physical: 0, chemical: 0, psychological: 0, biological: 0 },
 }
 
 function read<T>(key: string, fallback: T): T {
@@ -42,7 +39,8 @@ export function addRecord(record: StressRecord): StressRecord[] {
 }
 
 export function loadPetState(): PetState {
-  return { ...initialPetState, ...read<Partial<PetState>>(PET_KEY, {}) }
+  const saved = read<Partial<PetState>>(PET_KEY, {})
+  return { ...initialPetState, ...saved, stats: { ...initialPetState.stats, ...saved.stats } }
 }
 
 export function savePetState(state: PetState) {

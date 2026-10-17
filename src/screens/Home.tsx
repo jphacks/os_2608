@@ -9,17 +9,9 @@ type Props = {
   onConsult: () => void
 }
 
-const statLabels: { key: keyof Omit<PetState, 'level' | 'experience'>; label: string }[] = [
-  { key: 'acceptance', label: 'うけとめ' },
-  { key: 'recovery', label: 'かいふく' },
-  { key: 'connection', label: 'つながり' },
-  { key: 'affection', label: 'なかよし' },
-]
-
 export function Home({ pet, onConsult }: Props) {
   const [lines, setLines] = useState<string[]>([greeting])
   const [expression, setExpression] = useState<Expression>('normal')
-  const [showStats, setShowStats] = useState(false)
 
   return (
     <main className="screen home">
@@ -37,16 +29,6 @@ export function Home({ pet, onConsult }: Props) {
         <div className="exp-bar" role="progressbar" aria-valuenow={0} aria-valuemin={0} aria-valuemax={100}>
           <div className="exp-fill" style={{ width: '0%' }} />
         </div>
-        {showStats && (
-          <ul className="stats">
-            {statLabels.map(({ key, label }) => (
-              <li key={key}>
-                <span>{label}</span>
-                <span>{pet[key]}</span>
-              </li>
-            ))}
-          </ul>
-        )}
       </section>
 
       <button className="primary" onClick={onConsult}>
@@ -57,7 +39,6 @@ export function Home({ pet, onConsult }: Props) {
           onClick={() => {
             setLines([petLine])
             setExpression('happy')
-            setShowStats(false)
           }}
         >
           なでる
@@ -66,7 +47,6 @@ export function Home({ pet, onConsult }: Props) {
           onClick={() => {
             setLines([lookLine])
             setExpression('normal')
-            setShowStats(true)
           }}
         >
           ようすを見る
@@ -75,7 +55,6 @@ export function Home({ pet, onConsult }: Props) {
           onClick={() => {
             setLines([historyNotReadyLine])
             setExpression('normal')
-            setShowStats(false)
           }}
         >
           きろくを見る

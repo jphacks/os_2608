@@ -17,14 +17,14 @@ export type StressRecord = {
 
 export type Level = 1 | 2 | 3
 
-// 能力値・経験値の増え方は未定。いまは初期値のまま保存だけする
+// 能力値は4分類のストレスごとの内部パラメータ（画面には出さない）。
+// 相談内容を4分類のどれかに振り分け、成長の方向を決めるのに使う。増え方は未定で、いまは初期値のまま保存だけする
+export type StressStats = Record<StressType, number>
+
 export type PetState = {
   level: Level
   experience: number
-  acceptance: number
-  recovery: number
-  connection: number
-  affection: number
+  stats: StressStats
 }
 
 export type Expression = 'normal' | 'happy' | 'worried' | 'rest'
