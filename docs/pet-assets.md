@@ -6,13 +6,18 @@
 
 置き場所: `src/assets/pet/`
 
+ペットは、レベル1のあとにレベル2・3へ進化します。レベル2以降の見た目は、最初に進化したときのストレスの傾向（4系統）で変わります。
+
 | ファイル名 | 内容 |
 | --- | --- |
 | `lv1-normal.png` | レベル1・通常 |
-| `lv1-happy.png` | レベル1・喜ぶ |
-| `lv1-worried.png` | レベル1・心配する |
-| `lv1-rest.png` | レベル1・休む／眠る |
-| `lv2-…` / `lv3-…` | レベル2・3も同じ4種類 |
+| `lv1-happy.png` / `lv1-worried.png` / `lv1-rest.png` | レベル1・喜ぶ／心配する／休む |
+| `lv2-physical-normal.png` など | レベル2・物理的ストレスの系統・通常 |
+| `lv2-chemical-…` / `lv2-psychological-…` / `lv2-biological-…` | 化学的／心理・社会的／生物的の系統 |
+| `lv3-physical-…` など | レベル3も、4系統それぞれ |
+
+各系統の表情は `normal` `happy` `worried` `rest` の4種類です（通常の絵だけでも動きます）。
+傾向が決まらなかった場合は、系統の付かない `lv2-normal.png` `lv3-normal.png` が使われます。
 
 - 形式: 透明背景の PNG、**32 × 32 px**
 - 同じ名前の `.png` があれば、仮の `.svg` より優先して使われます。仮の `.svg` は消しても消さなくても構いません。

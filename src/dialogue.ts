@@ -1,8 +1,9 @@
-import type { Category, Expression, Intensity, StressRecord } from './types'
+import type { Category, Expression, Intensity } from './types'
 
 export const greeting = 'おかえり。今日はどうだった？'
 
-export const categoryQuestion = 'どうしたの？'
+export const categoryQuestion = 'どうしたの？ あてはまるものを、いくつでも選んでね。'
+export const categoryConfirm = '決定'
 export const categoryOptions: { value: Category; label: string }[] = [
   { value: 'commute', label: '通学・移動がつらかった' },
   { value: 'task', label: '課題や仕事が大変だった' },
@@ -19,19 +20,19 @@ export const intensityOptions: { value: Intensity; label: string }[] = [
 ]
 
 // 相談の最後にペットが返す台詞
-export function responseLines(record: StressRecord): string[] {
+export function responseLines(categories: Category[], intensity: Intensity | undefined, evolved: boolean): string[] {
   let first: string
-  if (record.category === 'good_day') first = '大丈夫な日だったんだね。教えてくれてうれしいな。'
-  else if (record.intensity === 3) first = 'それはつらかったね。今日は無理しなくていいよ。'
+  if (categories.every((c) => c === 'good_day')) first = '大丈夫な日だったんだね。教えてくれてうれしいな。'
+  else if (intensity === 3) first = 'それはつらかったね。今日は無理しなくていいよ。'
   else first = '話してくれてありがとう。今日を乗り切ったんだね。'
-  return [first]
+  return evolved ? [first, evolveLine] : [first]
 }
 
-export function responseExpression(record: StressRecord): Expression {
-  if (record.intensity === 3) return 'worried'
-  return 'happy'
+export function responseExpression(intensity: Intensity | undefined): Expression {
+  return intensity === 3 ? 'worried' : 'happy'
 }
 
+export const evolveLine = '進化したよ！ 新しい姿になったよ。'
 export const petLine = 'えへへ、うれしいな。'
 export const petLimitLine = '今日はもうたくさんなでてもらったよ。また明日ね。'
 export const roomUnlockedLine = '新しいお部屋が開いたよ！'

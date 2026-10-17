@@ -280,3 +280,23 @@ button:focus-visible {
 .room-item.room-3 {
   color: #ffffff;
 }
+
+.choices .check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.choices .check[aria-checked='true'] {
+  background: #fff1d6;
+  border-color: var(--accent);
+}
+
+.box {
+  font-size: 1.2rem;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

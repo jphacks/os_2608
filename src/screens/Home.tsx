@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { LevelGauge } from '../components/LevelGauge'
 import { Pet } from '../components/Pet'
 import { SpeechBubble } from '../components/SpeechBubble'
 import { affectionLevel, gaugeRatio, pat } from '../affection'
@@ -49,7 +50,7 @@ export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
     <main className="screen home">
       <SpeechBubble lines={lines} />
       <div className={`pet-stage room ${room.id}`}>
-        <Pet level={pet.level} expression={expression} />
+        <Pet level={pet.level} branch={pet.branch} expression={expression} />
         {heartKey > 0 && (
           <div className="hearts" key={heartKey} aria-hidden="true">
             <span>♥</span>
@@ -77,16 +78,7 @@ export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
         </section>
       )}
 
-      <section className="status" aria-label="ペットのようす">
-        <div className="status-row">
-          <span className="level">Lv {pet.level}</span>
-          <span className="exp-label">けいけんち {pet.experience}</span>
-        </div>
-        {/* レベルアップに必要な経験値は未定のため、ゲージは0のまま */}
-        <div className="exp-bar" role="progressbar" aria-valuenow={0} aria-valuemin={0} aria-valuemax={100}>
-          <div className="exp-fill" style={{ width: '0%' }} />
-        </div>
-      </section>
+      <LevelGauge experience={pet.experience} level={pet.level} />
 
       <button className="primary" onClick={onConsult}>
         ペットに相談する

@@ -1,4 +1,4 @@
-import type { PetState, StressRecord } from './types'
+import type { Category, PetState, StressRecord } from './types'
 
 // 保存形式を変えたときに古いデータと混ざらないよう、キーにバージョンを付ける
 const RECORDS_KEY = 'pet-stress-app/v1/records'
@@ -8,6 +8,7 @@ export const initialPetState: PetState = {
   level: 1,
   experience: 0,
   stats: { physical: 0, chemical: 0, psychological: 0, biological: 0 },
+  recentTypes: [],
   affection: { pats: 0, patsToday: 0, lastPatDate: '' },
   roomId: 'room-1',
 }
@@ -30,8 +31,10 @@ function write(key: string, value: unknown) {
 }
 
 export function loadRecords(): StressRecord[] {
-  const records = read<StressRecord[]>(RECORDS_KEY, [])
-  return Array.isArray(records) ? records : []
+  const records = read<(StressRecord & { category?: Category })[]>(RECORDS_KEY, [])
+  if (!Array.isArray(records)) return []
+  // 1つだけ選ぶ形式（category）で保存された古い記録を、複数選択の形式（categories）にそろえる
+  return records.map(({ category, ...r }) => ({ ...r, categories: r.categories ?? (category ? [category] : []) }))
 }
 
 export function addRecord(record: StressRecord): StressRecord[] {
