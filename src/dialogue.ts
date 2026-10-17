@@ -1,4 +1,4 @@
-import type { Category, Expression, Intensity } from './types'
+import type { Answer, Category, Expression, Intensity } from './types'
 
 export const greeting = 'おかえり。今日はどうだった？'
 
@@ -12,24 +12,26 @@ export const categoryOptions: { value: Category; label: string }[] = [
   { value: 'good_day', label: '今日は大丈夫だった' },
 ]
 
-export const intensityQuestion = 'どのくらいつらかった？'
+export const intensityQuestion = 'それぞれ、どのくらいつらかった？'
 export const intensityOptions: { value: Intensity; label: string }[] = [
   { value: 1, label: '少しだけ' },
   { value: 2, label: 'まあまあ' },
   { value: 3, label: 'かなりつらい' },
 ]
 
-// 相談の最後にペットが返す台詞
-export function responseLines(categories: Category[], intensity: Intensity | undefined, evolved: boolean): string[] {
+const hasHeavy = (answers: Answer[]) => answers.some((a) => a.intensity === 3)
+
+// 相談の最後にペットが返す台詞。「かなりつらい」が1つでもあれば、いたわる台詞にする
+export function responseLines(answers: Answer[], evolved: boolean): string[] {
   let first: string
-  if (categories.every((c) => c === 'good_day')) first = '大丈夫な日だったんだね。教えてくれてうれしいな。'
-  else if (intensity === 3) first = 'それはつらかったね。今日は無理しなくていいよ。'
+  if (answers.every((a) => a.category === 'good_day')) first = '大丈夫な日だったんだね。教えてくれてうれしいな。'
+  else if (hasHeavy(answers)) first = 'それはつらかったね。今日は無理しなくていいよ。'
   else first = '話してくれてありがとう。今日を乗り切ったんだね。'
   return evolved ? [first, evolveLine] : [first]
 }
 
-export function responseExpression(intensity: Intensity | undefined): Expression {
-  return intensity === 3 ? 'worried' : 'happy'
+export function responseExpression(answers: Answer[]): Expression {
+  return hasHeavy(answers) ? 'worried' : 'happy'
 }
 
 export const evolveLine = '進化したよ！ 新しい姿になったよ。'

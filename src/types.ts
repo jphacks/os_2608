@@ -1,18 +1,20 @@
 // 出来事カテゴリ（相談の「どうしたの？」の選択肢と1対1）
 export type Category = 'commute' | 'task' | 'relationships' | 'tired' | 'good_day'
 
-// つらさの強さ。「今日は大丈夫だった」だけのときは聞かない
+// つらさの強さ。選んだ出来事ごとに答える（「今日は大丈夫だった」は聞かない）
 export type Intensity = 1 | 2 | 3
 
 // ストレスの4分類。アプリ内部で判定し、成長の方向に使う
 export type StressType = 'physical' | 'chemical' | 'psychological' | 'biological'
 
+// 選んだ出来事1つぶんの回答。「今日は大丈夫だった」は強さを聞かないので intensity が無い
+export type Answer = { category: Category; intensity?: Intensity }
+
 export type StressRecord = {
   id: string
   createdAt: string
-  // 1回の相談で選んだ出来事（複数選択）
-  categories: Category[]
-  intensity?: Intensity
+  // 1回の相談で選んだ出来事（複数選択）と、それぞれのつらさ
+  answers: Answer[]
 }
 
 export type Level = 1 | 2 | 3

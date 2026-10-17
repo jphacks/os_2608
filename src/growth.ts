@@ -1,4 +1,4 @@
-import type { Category, Level, PetState, StressType } from './types'
+import type { Answer, Category, Level, PetState, StressType } from './types'
 
 // 出来事を1つ選ぶごとに +1。この数たまるとレベルが1つ上がる
 export const POINTS_PER_LEVEL = 30
@@ -45,19 +45,20 @@ export type ConsultResult = {
 }
 
 // 相談の結果をペットの状態に反映する
-export function applyConsult(pet: PetState, categories: Category[]): ConsultResult {
+// レベルは、選んだ出来事1つにつき +1。系統は、つらさ（少しだけ=1、まあまあ=2、かなりつらい=3）のぶんだけ数える
+export function applyConsult(pet: PetState, answers: Answer[]): ConsultResult {
   const stats = { ...pet.stats }
   let recentTypes = pet.recentTypes
-  for (const category of categories) {
+  for (const { category, intensity } of answers) {
     const type = categoryTypes[category]
     if (!type) continue
-    stats[type] += 1
+    stats[type] += intensity ?? 1
     recentTypes = [...recentTypes.filter((t) => t !== type), type]
   }
-  const experience = pet.experience + categories.length
+  const experience = pet.experience + answers.length
   const level = levelFor(experience)
   const next: PetState = { ...pet, experience, stats, recentTypes, level }
   // 見た目の差分は、最初に進化したときの傾向で決まる
   if (pet.level === 1 && level >= 2) next.branch = trendOf(next)
-  return { pet: next, gained: categories.length, leveledUp: level > pet.level }
+  return { pet: next, gained: answers.length, leveledUp: level > pet.level }
 }
