@@ -416,7 +416,9 @@ button:disabled {
 .home .pet-stage {
   flex: 1;
   position: relative;
-  padding: 0 0 12%;
+  /* ペットの足元を地面に近づける。下の余白の中だけに置くので、相談ボタンには重ならない */
+  justify-content: flex-end;
+  padding: 0 0 6dvh;
   /* なでる動きを、画面のスクロールに取られないようにする */
   touch-action: none;
   user-select: none;
