@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { DevPanel } from '../components/DevPanel'
 import { LevelGauge } from '../components/LevelGauge'
 import { Pet } from '../components/Pet'
 import { SpeechBubble } from '../components/SpeechBubble'
@@ -28,6 +29,17 @@ export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
   const [showAffection, setShowAffection] = useState(false)
   // ハートを出し直すたびに key を変えて、アニメーションを最初から再生する
   const [heartKey, setHeartKey] = useState(0)
+  // 開発者モード: 下の注意書きを5回続けてタップすると開く
+  const [devOpen, setDevOpen] = useState(false)
+  const [devTaps, setDevTaps] = useState(0)
+  const onNoteTap = () => {
+    if (devTaps + 1 >= 5) {
+      setDevOpen(true)
+      setDevTaps(0)
+    } else {
+      setDevTaps(devTaps + 1)
+    }
+  }
 
   const onPat = () => {
     const result = pat(pet.affection)
@@ -108,7 +120,9 @@ export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
         おへやをえらぶ
       </button>
 
-      <p className="note">
+      {devOpen && <DevPanel pet={pet} onChangePet={onChangePet} onClose={() => setDevOpen(false)} />}
+
+      <p className="note" onClick={onNoteTap}>
         記録はこの端末のブラウザ内に保存されます。これは医療的な診断を行うアプリではなく、日々の気持ちを振り返るためのサポートです。
       </p>
     </main>
