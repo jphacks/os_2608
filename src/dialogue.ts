@@ -33,5 +33,7 @@ export function responseExpression(record: StressRecord): Expression {
 }
 
 export const petLine = 'えへへ、うれしいな。'
+export const petLimitLine = '今日はもうたくさんなでてもらったよ。また明日ね。'
+export const roomUnlockedLine = '新しいお部屋が開いたよ！'
 export const lookLine = '今日もいっしょにいるよ。'
 export const historyNotReadyLine = 'きろくを見る画面は、いま準備中だよ。'

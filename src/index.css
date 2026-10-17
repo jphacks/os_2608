@@ -156,3 +156,110 @@ button:focus-visible {
   outline: 3px solid var(--gauge);
   outline-offset: 2px;
 }
+
+/* お部屋（仮の背景）。絵ができたら background を画像に差し替える */
+.room {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: 240px;
+  align-items: flex-end;
+}
+
+.room-1,
+.room.room-1 {
+  background: linear-gradient(#f6e7c8 0 70%, #c9a26b 70% 100%);
+}
+
+.room-2,
+.room.room-2 {
+  background: linear-gradient(#bfe3f0 0 70%, #e8c98a 70% 100%);
+}
+
+.room-3,
+.room.room-3 {
+  background: linear-gradient(#2b3a67 0 70%, #4a3f6b 70% 100%);
+}
+
+.hearts {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hearts span {
+  position: absolute;
+  bottom: 40%;
+  color: #e0546b;
+  font-size: 1.6rem;
+  opacity: 0;
+  animation: float-up 1.2s ease-out forwards;
+}
+
+.hearts span:nth-child(1) { left: 30%; }
+.hearts span:nth-child(2) { left: 48%; animation-delay: 0.15s; }
+.hearts span:nth-child(3) { left: 64%; animation-delay: 0.3s; }
+
+@keyframes float-up {
+  0% { opacity: 0; transform: translateY(0); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-80px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hearts span { animation-duration: 0.01s; }
+}
+
+.exp-fill.heart {
+  background: #e0546b;
+}
+
+.secondary {
+  min-height: 48px;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  background: var(--panel);
+  cursor: pointer;
+}
+
+.room-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.room-item {
+  width: 100%;
+  min-height: 72px;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  padding: 0 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.room-item[aria-pressed='true'] {
+  border-color: var(--accent);
+}
+
+.room-item:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.room-name {
+  font-weight: 700;
+}
+
+.room-state {
+  font-size: 0.85rem;
+}
+
+.room-item.room-3 {
+  color: #ffffff;
+}

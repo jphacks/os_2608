@@ -21,10 +21,22 @@ export type Level = 1 | 2 | 3
 // 相談内容を4分類のどれかに振り分け、成長の方向を決めるのに使う。増え方は未定で、いまは初期値のまま保存だけする
 export type StressStats = Record<StressType, number>
 
+// 親密度（能力値とは別枠）。なでると上がり、レベルが上がるとお部屋が増える。経験値のレベルとは無関係
+export type Affection = {
+  // これまでになでた回数
+  pats: number
+  // 今日（端末の日付）になでた回数と、その日付 YYYY-MM-DD
+  patsToday: number
+  lastPatDate: string
+}
+
 export type PetState = {
   level: Level
   experience: number
   stats: StressStats
+  affection: Affection
+  // いま表示しているお部屋
+  roomId: string
 }
 
 export type Expression = 'normal' | 'happy' | 'worried' | 'rest'

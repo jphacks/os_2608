@@ -8,6 +8,8 @@ export const initialPetState: PetState = {
   level: 1,
   experience: 0,
   stats: { physical: 0, chemical: 0, psychological: 0, biological: 0 },
+  affection: { pats: 0, patsToday: 0, lastPatDate: '' },
+  roomId: 'room-1',
 }
 
 function read<T>(key: string, fallback: T): T {
@@ -40,7 +42,12 @@ export function addRecord(record: StressRecord): StressRecord[] {
 
 export function loadPetState(): PetState {
   const saved = read<Partial<PetState>>(PET_KEY, {})
-  return { ...initialPetState, ...saved, stats: { ...initialPetState.stats, ...saved.stats } }
+  return {
+    ...initialPetState,
+    ...saved,
+    stats: { ...initialPetState.stats, ...saved.stats },
+    affection: { ...initialPetState.affection, ...saved.affection },
+  }
 }
 
 export function savePetState(state: PetState) {
