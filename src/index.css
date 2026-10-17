@@ -7,7 +7,8 @@
   --accent-text: #ffffff;
   --border: #e8dcc6;
   --gauge: #81b29a;
-  font-family: system-ui, -apple-system, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+  --line: #5b4636;
+  font-family: 'DotGothic16', system-ui, -apple-system, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
   color: var(--text);
   background: var(--bg);
 }
@@ -24,6 +25,7 @@ body {
 
 button {
   font: inherit;
+  letter-spacing: 0.05em;
   color: inherit;
 }
 
@@ -37,10 +39,25 @@ button {
   gap: 16px;
 }
 
+.bubble,
+.status,
+.primary,
+.secondary,
+.sub-actions button,
+.choices button,
+.room-item {
+  /* 角を1ドットぶん欠いた、ドット絵風の枠 */
+  clip-path: polygon(
+    0 4px, 4px 4px, 4px 0,
+    calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px,
+    100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%,
+    4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px)
+  );
+}
+
 .bubble {
   background: var(--panel);
-  border: 2px solid var(--border);
-  border-radius: 16px;
+  border: 4px solid var(--line);
   padding: 12px 16px;
   min-height: 64px;
 }
@@ -64,8 +81,7 @@ button {
 
 .status {
   background: var(--panel);
-  border: 2px solid var(--border);
-  border-radius: 12px;
+  border: 4px solid var(--line);
   padding: 12px 16px;
 }
 
@@ -84,9 +100,9 @@ button {
 }
 
 .exp-bar {
-  height: 10px;
+  height: 16px;
+  border: 4px solid var(--text);
   background: var(--border);
-  border-radius: 5px;
   overflow: hidden;
 }
 
@@ -99,8 +115,7 @@ button {
 .sub-actions button,
 .choices button {
   min-height: 48px;
-  border-radius: 12px;
-  border: 2px solid var(--border);
+  border: 4px solid var(--line);
   background: var(--panel);
   cursor: pointer;
 }
@@ -152,6 +167,10 @@ button {
   color: var(--muted);
 }
 
+button:active:not(:disabled) {
+  transform: translateY(2px);
+}
+
 button:focus-visible {
   outline: 3px solid var(--gauge);
   outline-offset: 2px;
@@ -160,7 +179,7 @@ button:focus-visible {
 /* お部屋（仮の背景）。絵ができたら background を画像に差し替える */
 .room {
   position: relative;
-  border-radius: 12px;
+  border: 4px solid var(--line);
   overflow: hidden;
   min-height: 240px;
   align-items: flex-end;
@@ -216,8 +235,7 @@ button:focus-visible {
 
 .secondary {
   min-height: 48px;
-  border-radius: 12px;
-  border: 2px solid var(--border);
+  border: 4px solid var(--line);
   background: var(--panel);
   cursor: pointer;
 }
@@ -234,8 +252,7 @@ button:focus-visible {
 .room-item {
   width: 100%;
   min-height: 72px;
-  border-radius: 12px;
-  border: 2px solid var(--border);
+  border: 4px solid var(--line);
   padding: 0 16px;
   display: flex;
   justify-content: space-between;
