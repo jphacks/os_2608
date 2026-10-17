@@ -204,7 +204,8 @@ button:focus-visible {
 
 .room-1,
 .room.room-1 {
-  background: linear-gradient(#f6e7c8 0 70%, #c9a26b 70% 100%);
+  background: url('./assets/rooms/room-1.png') center / cover no-repeat;
+  image-rendering: pixelated;
 }
 
 .room-2,
@@ -339,6 +340,7 @@ button:disabled {
 
 .dev-row span {
   flex: 1 1 100%;
+}
 
 .intensity-row {
   margin: 0;
