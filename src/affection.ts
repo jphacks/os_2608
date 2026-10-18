@@ -55,3 +55,12 @@ export function consultAffection(current: Affection): { affection: Affection; le
     leveledUp: affectionLevel(pats) > affectionLevel(current.pats),
   }
 }
+
+// ショップのアイテムを与えたときの親密度。なでる回数の上限や日付には影響しない
+export function giveAffection(current: Affection, pats: number): { affection: Affection; leveledUp: boolean } {
+  const total = current.pats + pats
+  return {
+    affection: { ...current, pats: total },
+    leveledUp: affectionLevel(total) > affectionLevel(current.pats),
+  }
+}

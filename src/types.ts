@@ -53,6 +53,8 @@ export type PetState = {
   petName?: string
   // チュートリアルを最後まで見たか。スキップしたときは立てず、次に開いたときもう一度始める
   tutorialDone?: boolean
+  // ショップで使ったポイントの合計。所持ポイント = 4系統の点数の合計 − これ
+  spentPoints?: number
 }
 
 export type Expression = 'normal' | 'happy' | 'worried' | 'rest'
