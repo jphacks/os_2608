@@ -12,8 +12,8 @@ export const greeting = (name: string, petName?: string) =>
 
 export const categoryQuestion = 'どうしたの？ あてはまるものを、いくつでも選んでね。'
 export const categoryConfirm = '決定'
-export const choiceNotStressLine = 'ストレスの話ではないかもしれません。ちがう言い方で書いてみてね。'
-export const choiceErrorLine = 'うまく判定できなかったよ。もう一度ためしてね。'
+export const choiceNotStressLine = 'それはストレスの話じゃないかも。違う言い方で書いてみてね。'
+export const choiceErrorLine = 'うまく判定できなかったよ。もう一度試してね。'
 export const choiceAddLabel = '選択肢を追加'
 export const choiceEditLabel = '編集'
 export const choiceDeleteLabel = '削除'
@@ -42,8 +42,8 @@ const hasHeavy = (answers: Answer[]) => answers.some((a) => a.intensity === 3)
 export function responseLines(answers: Answer[], evolved: boolean): string[] {
   let first: string
   if (answers.every((a) => a.category === 'good_thing')) first = 'いいことがあったんだね！ 教えてくれてうれしいな。'
-  else if (hasHeavy(answers)) first = 'それはつらかったね。今日は無理しなくていいよ。'
-  else first = '話してくれてありがとう。今日を乗り切ったんだね。'
+  else if (hasHeavy(answers)) first = 'それはつらかったね。今日もお疲れ様。'
+  else first = '話してくれてありがとう。よく頑張ったね。'
   return evolved ? [first, evolveLine] : [first]
 }
 
@@ -75,9 +75,9 @@ export const tutorialEat = ['…えい！', 'もぐもぐ…']
 export const tutorialPurified = 'ストレスが浄化されたよ！'
 export const tutorialExplain = ['えへへ驚いた？', 'ぼくはストレスを食べれるんだぁ！すごいでしょ！']
 export const tutorialPatHint = 'ぼくの上を、左右になでてみてね'
-export const tutorialPatDone = 'わぁ撫でてくれたの！嬉しい！！！'
+export const tutorialPatDone = 'わぁなでてくれたの！嬉しい！！！'
 export const tutorialNameAsk = ['…そうだ！ねぇねぇ！', 'ぼく名前がないからさ、ぼくに名前をつけてくれない？']
 export const tutorialNamePlaceholder = 'ペットの名前'
 export const tutorialNameDecide = 'この名前にする'
 export const tutorialNamed = (name: string) => `${name}…いい名前だよ！ありがとう！`
-export const tutorialBye = 'またお悩みがあったらいつでも此処に来てね！'
+export const tutorialBye = '悩みがあったらいつでもここに来てね！'
