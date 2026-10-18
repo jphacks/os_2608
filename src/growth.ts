@@ -58,7 +58,7 @@ export function applyConsult(pet: PetState, answers: Answer[]): ConsultResult {
   const experience = pet.experience + answers.length
   const level = levelFor(experience)
   const next: PetState = { ...pet, experience, stats, recentTypes, level }
-  // 見た目の差分は、最初に進化したときの傾向で決まる
-  if (pet.level === 1 && level >= 2) next.branch = trendOf(next)
+  // 見た目の差分は、進化するたび（Lv1→2、Lv2→3）に、そのときの累計で最多の傾向で決め直す
+  if (level > pet.level && level >= 2) next.branch = trendOf(next) ?? pet.branch
   return { pet: next, gained: answers.length, leveledUp: level > pet.level }
 }

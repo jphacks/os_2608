@@ -19,16 +19,19 @@ type Props = {
   // 最初に進化したときの傾向。Lv2以降の見た目の差分
   branch?: StressType
   expression: Expression
-  // 32px のドット絵を何倍で表示するか。ぼやけないよう整数倍にする
+  // ドット絵を何倍で表示するか（仮の絵は32px基準）。ぼやけないよう整数倍にする
   scale?: number
 }
 
 export function Pet({ level, branch, expression, scale = 6 }: Props) {
-  const size = 32 * Math.round(scale)
+  const src = findImage(level, branch, expression)
+  // 仮の絵は 32px、本番の絵（PNG）は 50px。どちらもぼやけないよう整数倍にする
+  const isPng = src?.endsWith('.png') ?? false
+  const size = isPng ? 50 * Math.max(1, Math.round((32 * scale) / 50)) : 32 * Math.round(scale)
   return (
     <img
       className="pet"
-      src={findImage(level, branch, expression)}
+      src={src}
       width={size}
       height={size}
       alt="ペット"
