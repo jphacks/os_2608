@@ -7,7 +7,8 @@ export function playerCallName(level: number, custom?: string): string {
   return level >= 3 ? 'あるじどの' : 'あるじ'
 }
 
-export const greeting = (name: string) => `${name}、おかえり。今日はどうだった？`
+export const greeting = (name: string, petName?: string) =>
+  petName ? `${name}、おかえり！ ${petName}だよ。今日はどうだった？` : `${name}、おかえり。今日はどうだった？`
 
 export const categoryQuestion = 'どうしたの？ あてはまるものを、いくつでも選んでね。'
 export const categoryConfirm = '決定'
@@ -62,3 +63,20 @@ export const petLine = (name: string) => `えへへ、うれしいな、${name}�
 export const petLimitLine = '今日はもうたくさんなでてもらったよ。また明日ね。'
 export const roomUnlockedLine = '新しいお部屋が開いたよ！'
 export const lookLine = '今日もいっしょにいるよ。'
+
+// チュートリアル（Issue #33）。ペットの名前は8文字まで
+export const PET_NAME_MAX = 8
+export const tutorialIntro = ['わぁ！お人間さんだぁ！！初めて見た！！！']
+export const tutorialAsk = ['なんか悩んでいるんだね？', 'ぼくに、そのもやもやを教えてくれる？']
+export const tutorialPlaceholder = '悩んでいることを、なんでも書いてみてね'
+export const tutorialSend = '食べてもらう'
+export const tutorialEat = ['…えい！', 'もぐもぐ…']
+export const tutorialPurified = 'ストレスが浄化されたよ！'
+export const tutorialExplain = ['えへへ驚いた？', 'ぼくはストレスを食べれるんだぁ！すごいでしょ！']
+export const tutorialPatHint = 'ぼくの上を、左右になでてみてね'
+export const tutorialPatDone = 'わぁ撫でてくれたの！嬉しい！！！'
+export const tutorialNameAsk = ['…そうだ！ねぇねぇ！', 'ぼく名前がないからさ、ぼくに名前をつけてくれない？']
+export const tutorialNamePlaceholder = 'ペットの名前'
+export const tutorialNameDecide = 'この名前にする'
+export const tutorialNamed = (name: string) => `${name}…いい名前だよ！ありがとう！`
+export const tutorialBye = 'またお悩みがあったらいつでも此処に来てね！'
