@@ -46,6 +46,7 @@ export function App() {
           updatePet({ ...pet, roomId })
           setScreen('home')
         }}
+        onRename={(playerName) => updatePet({ ...pet, playerName: playerName || undefined })}
         onDone={() => setScreen('home')}
       />
     )

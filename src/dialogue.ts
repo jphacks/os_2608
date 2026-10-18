@@ -1,6 +1,13 @@
 import type { Answer, Category, Expression, Intensity } from './types'
 
-export const greeting = 'おかえり。今日はどうだった？'
+// ペットがプレイヤーを呼ぶ名前。かえていなければ、経験値レベル1・2は「あるじ」、3以上は「あるじどの」
+export const PLAYER_NAME_MAX = 8
+export function playerCallName(level: number, custom?: string): string {
+  if (custom) return custom
+  return level >= 3 ? 'あるじどの' : 'あるじ'
+}
+
+export const greeting = (name: string) => `${name}、おかえり。今日はどうだった？`
 
 export const categoryQuestion = 'どうしたの？ あてはまるものを、いくつでも選んでね。'
 export const categoryConfirm = '決定'
@@ -43,7 +50,7 @@ export function responseExpression(answers: Answer[]): Expression {
 }
 
 export const evolveLine = '進化したよ！ 新しい姿になったよ。'
-export const petLine = 'えへへ、うれしいな。'
+export const petLine = (name: string) => `えへへ、うれしいな、${name}。`
 export const petLimitLine = '今日はもうたくさんなでてもらったよ。また明日ね。'
 export const roomUnlockedLine = '新しいお部屋が開いたよ！'
 export const lookLine = '今日もいっしょにいるよ。'

@@ -46,6 +46,8 @@ export type PetState = {
   affection: Affection
   // いま表示しているお部屋
   roomId: string
+  // プレイヤーがかえた呼び方。未設定なら初期の呼び方（経験値レベルで決まる）
+  playerName?: string
 }
 
 export type Expression = 'normal' | 'happy' | 'worried' | 'rest'
