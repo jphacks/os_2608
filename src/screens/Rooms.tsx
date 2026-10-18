@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { SpeechBubble } from '../components/SpeechBubble'
 import { affectionLevel, gaugeRatio } from '../affection'
-import { findRoom, rooms } from '../rooms'
+import { rooms } from '../rooms'
 import type { PetState } from '../types'
 
 type Props = {
@@ -13,10 +13,10 @@ type Props = {
 export function Rooms({ pet, onSelect, onDone }: Props) {
   const level = affectionLevel(pet.affection.pats)
   const [previewId, setPreviewId] = useState(pet.roomId)
-  const preview = findRoom(previewId)
   const ratio = gaugeRatio(pet.affection.pats)
   return (
-    <main className="screen rooms">
+    <main className={`screen rooms room ${previewId}`}>
+      <div className="rooms-veil" aria-hidden="true" />
       <section className="status affection" aria-label="なかよしゲージ">
         <div className="status-row">
           <span className="level">なかよし Lv {level}</span>
@@ -32,7 +32,6 @@ export function Rooms({ pet, onSelect, onDone }: Props) {
           <div className="exp-fill heart" style={{ width: `${ratio * 100}%` }} />
         </div>
       </section>
-      <div className={`room room-preview ${preview.id}`} aria-label={`${preview.name}のプレビュー`} />
       <SpeechBubble lines={['どのお部屋にいようか？']} />
       <ul className="room-list">
         {rooms.map((room) => {
