@@ -467,3 +467,12 @@ button:disabled {
   opacity: 0;
   pointer-events: none;
 }
+
+/* お部屋選択画面: 全体を下げて、上にゲージとプレビューを置く */
+.screen.rooms {
+  padding-top: 72px;
+}
+
+.room-preview {
+  min-height: 160px;
+}
