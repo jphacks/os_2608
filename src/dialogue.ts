@@ -7,8 +7,11 @@ export function playerCallName(level: number, custom?: string): string {
   return level >= 3 ? 'あるじどの' : 'あるじ'
 }
 
-export const greeting = (name: string, petName?: string) =>
-  petName ? `${name}、おかえり！ ${petName}だよ。今日はどうだった？` : `${name}、おかえり。今日はどうだった？`
+// 2日目以降（前の日にも相談したことがある）は「今日も」にする
+export const greeting = (name: string, petName?: string, returning = false) => {
+  const today = returning ? '今日も' : '今日は'
+  return petName ? `${name}、おかえり！ ${petName}だよ。${today}どうだった？` : `${name}、おかえり。${today}どうだった？`
+}
 
 export const categoryQuestion = 'どうしたの？ あてはまるものを、いくつでも選んでね。'
 export const categoryConfirm = '決定'
@@ -23,7 +26,7 @@ export const choicePlaceholder = 'あたらしい選択肢'
 
 export const textPlaceholder = '今日のもやもやを、書いてみてね'
 export const textSend = '食べてもらう'
-export const textWarning = '※ 書いた文章はAIで判定します。名前や住所など、個人情報は書かないでね。'
+export const textWarning = '※ 書いた文章はAIで判定します。名前や住所など、個人情報は書かないでください。'
 export const textOr = 'または、選んで答える'
 export const notStressLine = 'もやもやを食べさせてほしいな'
 export const textErrorLine = 'うまく聞き取れなかったよ。もう一度書くか、選んで教えてね。'
@@ -31,7 +34,7 @@ export const textWaitingLine = 'もぐもぐ…'
 
 export const intensityQuestion = 'それぞれ、どのくらいつらかった？'
 export const intensityOptions: { value: Intensity; label: string }[] = [
-  { value: 1, label: '少しだけ' },
+  { value: 1, label: 'ちょっとだけ' },
   { value: 2, label: 'まあまあ' },
   { value: 3, label: 'かなりつらい' },
 ]

@@ -1,8 +1,8 @@
 import { categoryTypes } from './growth'
 import type { Answer, StressRecord, StressType } from './types'
 
-// 1日のようすグラフの縦軸。0=いいこと、1=少しだけ、2=まあまあ、3=かなりつらい
-export const moodLabels = ['いいこと', '少しだけ', 'まあまあ', 'かなりつらい'] as const
+// 1日のようすグラフの縦軸。0=いいこと、1=ちょっとだけ、2=まあまあ、3=かなりつらい
+export const moodLabels = ['いいこと', 'ちょっとだけ', 'まあまあ', 'かなりつらい'] as const
 
 export const typeNames: Record<StressType, string> = {
   physical: '物理的',
