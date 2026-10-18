@@ -5,7 +5,7 @@ import type { PetState } from './types'
 
 const maxPats = (maxAffectionLevel - 1) * PATS_PER_LEVEL
 
-// 経験値を変える。レベルは経験値から決まり、レベルが上がるたび（Lv4以降も）に色をくじ引きし直す
+// 経験値を変える。レベルは経験値から決まり、進化する（Lv1→2、Lv2→3）ときに色をくじ引きする
 export function setExperience(pet: PetState, value: number): PetState {
   const experience = Math.max(0, value)
   const level = levelFor(experience)
@@ -13,7 +13,7 @@ export function setExperience(pet: PetState, value: number): PetState {
   if (level === 1) {
     delete next.branch
     delete next.branchDate
-  } else if (level > pet.level) next = rollBranch(next)
+  } else if (pet.level < 3 && level > pet.level) next = rollBranch(next)
   return next
 }
 

@@ -75,7 +75,7 @@ export function applyConsult(pet: PetState, answers: Answer[]): ConsultResult {
   const level = levelFor(experience)
   const bond = consultAffection(pet.affection)
   let next: PetState = { ...pet, experience, stats, recentTypes, level, affection: bond.affection }
-  // 見た目の色は、レベルが上がるたび（Lv1→2、Lv2→3、Lv4以降も）に、累計点数の割合でくじ引きする
-  if (level > pet.level && level >= 2) next = rollBranch(next)
+  // 見た目の色は、進化した瞬間（Lv1→2、Lv2→3）に1回くじ引きする。Lv4以降は、1日1回のくじ引きだけ
+  if (pet.level < 3 && level >= 2 && level > pet.level) next = rollBranch(next)
   return { pet: next, gained: answers.length, leveledUp: level > pet.level, roomUnlocked: bond.leveledUp }
 }
