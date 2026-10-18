@@ -46,6 +46,8 @@ export type PetState = {
   affection: Affection
   // いま表示しているお部屋
   roomId: string
+  // 最後に相談が成立した時刻（ISO）。3時間のクールタイムの起点。未設定ならクールタイム無し
+  lastConsultAt?: string
   // プレイヤーがかえた呼び方。未設定なら初期の呼び方（経験値レベルで決まる）
   playerName?: string
 }

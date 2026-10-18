@@ -49,6 +49,14 @@ export function responseExpression(answers: Answer[]): Expression {
   return hasHeavy(answers) ? 'worried' : 'happy'
 }
 
+// 相談のクールタイム中に「もやもやを食べてもらう」を押したときの台詞（毎回ランダムに1つ）
+export const fullLines = [
+  'お腹いっぱいだから食べられない！',
+  'もうお腹いっぱい…またあとでね。',
+  'ちょっと休ませて〜。まだ食べられないよ。',
+]
+export const pickFullLine = () => fullLines[Math.floor(Math.random() * fullLines.length)]
+
 export const evolveLine = '進化したよ！ 新しい姿になったよ。'
 export const petLine = (name: string) => `えへへ、うれしいな、${name}。`
 export const petLimitLine = '今日はもうたくさんなでてもらったよ。また明日ね。'
