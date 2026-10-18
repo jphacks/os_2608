@@ -6,6 +6,13 @@ export type Choice = { id: string; label: string; category?: Category; answers?:
 
 export const CHOICE_MAX = 15
 
+// 編集・削除できず、Gemini も通さない固定の選択肢。系統には数えず、「いいこと」として記録に残る
+export const goodThingChoice: Choice = {
+  id: 'good_thing',
+  label: '今日はいいことがあった',
+  answers: [{ category: 'good_thing' }],
+}
+
 export const defaultChoices: Choice[] = [
   { id: 'commute', label: '通学・移動がつらかった', category: 'commute' },
   { id: 'task', label: '課題や仕事が大変だった', category: 'task' },

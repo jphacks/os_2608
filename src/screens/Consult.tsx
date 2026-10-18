@@ -28,7 +28,7 @@ import {
   textWarning,
 } from '../dialogue'
 import { PixelIcon } from '../components/PixelIcon'
-import { CHOICE_MAX, loadChoices, saveChoices, type Choice } from '../choices'
+import { CHOICE_MAX, goodThingChoice, loadChoices, saveChoices, type Choice } from '../choices'
 import { analyzeText, consultApiUrl } from '../gemini'
 import type { ConsultResult } from '../growth'
 import type { Answer, Intensity, PetState } from '../types'
@@ -81,8 +81,13 @@ export function Consult({ pet: current, onFinish, onDone }: Props) {
     }
   }
 
+  // 「いいことがあった」は、ストレスの選択肢とは一緒に選べない（選ぶと、もう一方は外れる）
   const toggle = (value: string) =>
-    setSelected((chosen) => (chosen.includes(value) ? chosen.filter((c) => c !== value) : [...chosen, value]))
+    setSelected((chosen) => {
+      if (chosen.includes(value)) return chosen.filter((c) => c !== value)
+      if (value === goodThingChoice.id) return [value]
+      return [...chosen.filter((c) => c !== goodThingChoice.id), value]
+    })
 
   // 選択肢の編集。editing は編集中の選択肢の id（追加のときは NEW）
   const [editing, setEditing] = useState<string>()
@@ -144,7 +149,7 @@ export function Consult({ pet: current, onFinish, onDone }: Props) {
     )
   }
 
-  const chosen = choices.filter((c) => selected.includes(c.id))
+  const chosen = [goodThingChoice, ...choices].filter((c) => selected.includes(c.id))
   // つらさを聞く選択肢（最初の4つ）と、判定済みの答えをそのまま使う選択肢（追加・編集したもの）
   const asked = chosen.filter((c) => c.category && !c.answers)
   const fixedAnswers = chosen.flatMap((c) => c.answers ?? [])
@@ -203,6 +208,21 @@ export function Consult({ pet: current, onFinish, onDone }: Props) {
         </div>
       )}
       <div className="choices">
+        {step === 'category' && (
+          <div className="choice-row">
+            <button
+              className="check"
+              role="checkbox"
+              aria-checked={selected.includes(goodThingChoice.id)}
+              onClick={() => toggle(goodThingChoice.id)}
+            >
+              <span className="box" aria-hidden="true">
+                {selected.includes(goodThingChoice.id) ? '■' : '□'}
+              </span>
+              {goodThingChoice.label}
+            </button>
+          </div>
+        )}
         {step === 'category' &&
           choices.map((o) =>
             editing === o.id ? (

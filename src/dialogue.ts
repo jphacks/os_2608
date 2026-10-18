@@ -41,7 +41,8 @@ const hasHeavy = (answers: Answer[]) => answers.some((a) => a.intensity === 3)
 // 相談の最後にペットが返す台詞。「かなりつらい」が1つでもあれば、いたわる台詞にする
 export function responseLines(answers: Answer[], evolved: boolean): string[] {
   let first: string
-  if (hasHeavy(answers)) first = 'それはつらかったね。今日は無理しなくていいよ。'
+  if (answers.every((a) => a.category === 'good_thing')) first = 'いいことがあったんだね！ 教えてくれてうれしいな。'
+  else if (hasHeavy(answers)) first = 'それはつらかったね。今日は無理しなくていいよ。'
   else first = '話してくれてありがとう。今日を乗り切ったんだね。'
   return evolved ? [first, evolveLine] : [first]
 }
