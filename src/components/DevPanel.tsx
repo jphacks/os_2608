@@ -1,4 +1,5 @@
 import { PATS_PER_LEVEL, affectionLevel } from '../affection'
+import { isFull } from '../cooldown'
 import { POINTS_PER_LEVEL } from '../growth'
 import { resetPet, setExperience, setPats } from '../devmode'
 import type { PetState } from '../types'
@@ -39,6 +40,10 @@ export function DevPanel({ pet, onChangePet, onClose }: Props) {
         <button onClick={() => onChangePet(setExperience(pet, pet.experience + POINTS_PER_LEVEL))}>
           Lv↑
         </button>
+      </div>
+      <div className="dev-row">
+        <span>{isFull(pet) ? 'お腹いっぱい中' : '食べられる'}</span>
+        <button onClick={() => onChangePet({ ...pet, lastConsultAt: undefined })}>クールタイム解除</button>
       </div>
       <div className="dev-row">
         <button

@@ -1,4 +1,4 @@
-import type { Answer, Category, Expression, Intensity } from './types'
+import type { Answer, Expression, Intensity } from './types'
 
 // ペットがプレイヤーを呼ぶ名前。かえていなければ、経験値レベル1・2は「あるじ」、3以上は「あるじどの」
 export const PLAYER_NAME_MAX = 8
@@ -12,13 +12,14 @@ export const greeting = (name: string, petName?: string) =>
 
 export const categoryQuestion = 'どうしたの？ あてはまるものを、いくつでも選んでね。'
 export const categoryConfirm = '決定'
-export const categoryOptions: { value: Category; label: string }[] = [
-  { value: 'commute', label: '通学・移動がつらかった' },
-  { value: 'task', label: '課題や仕事が大変だった' },
-  { value: 'relationships', label: '人とのことで疲れた' },
-  { value: 'tired', label: 'なんとなく疲れた' },
-  { value: 'good_day', label: '今日は大丈夫だった' },
-]
+export const choiceNotStressLine = 'ストレスの話ではないかもしれません。ちがう言い方で書いてみてね。'
+export const choiceErrorLine = 'うまく判定できなかったよ。もう一度ためしてね。'
+export const choiceAddLabel = '選択肢を追加'
+export const choiceEditLabel = '編集'
+export const choiceDeleteLabel = '削除'
+export const choiceOkLabel = '確定'
+export const choiceCancelLabel = 'キャンセル'
+export const choicePlaceholder = 'あたらしい選択肢'
 
 export const textPlaceholder = '今日のもやもやを、書いてみてね'
 export const textSend = '食べてもらう'
@@ -40,8 +41,7 @@ const hasHeavy = (answers: Answer[]) => answers.some((a) => a.intensity === 3)
 // 相談の最後にペットが返す台詞。「かなりつらい」が1つでもあれば、いたわる台詞にする
 export function responseLines(answers: Answer[], evolved: boolean): string[] {
   let first: string
-  if (answers.every((a) => a.category === 'good_day')) first = '大丈夫な日だったんだね。教えてくれてうれしいな。'
-  else if (hasHeavy(answers)) first = 'それはつらかったね。今日は無理しなくていいよ。'
+  if (hasHeavy(answers)) first = 'それはつらかったね。今日は無理しなくていいよ。'
   else first = '話してくれてありがとう。今日を乗り切ったんだね。'
   return evolved ? [first, evolveLine] : [first]
 }
@@ -49,6 +49,14 @@ export function responseLines(answers: Answer[], evolved: boolean): string[] {
 export function responseExpression(answers: Answer[]): Expression {
   return hasHeavy(answers) ? 'worried' : 'happy'
 }
+
+// 相談のクールタイム中に「もやもやを食べてもらう」を押したときの台詞（毎回ランダムに1つ）
+export const fullLines = [
+  'お腹いっぱいだから食べられない！',
+  'もうお腹いっぱい…またあとでね。',
+  'ちょっと休ませて〜。まだ食べられないよ。',
+]
+export const pickFullLine = () => fullLines[Math.floor(Math.random() * fullLines.length)]
 
 export const evolveLine = '進化したよ！ 新しい姿になったよ。'
 export const petLine = (name: string) => `えへへ、うれしいな、${name}。`

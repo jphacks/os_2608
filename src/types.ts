@@ -1,14 +1,13 @@
 // 出来事カテゴリ（相談の「どうしたの？」の選択肢と1対1）
-export type Category = 'commute' | 'task' | 'relationships' | 'tired' | 'good_day'
+export type Category = 'commute' | 'task' | 'relationships' | 'tired'
 
-// つらさの強さ。選んだ出来事ごとに答える（「今日は大丈夫だった」は聞かない）
+// つらさの強さ。選んだ出来事ごとに答える（追加・編集した選択肢は、判定済みなので聞かない）
 export type Intensity = 1 | 2 | 3
 
 // ストレスの4分類。アプリ内部で判定し、成長の方向に使う
 export type StressType = 'physical' | 'chemical' | 'psychological' | 'biological'
 
 // 1つぶんの回答。選択肢で答えたときは category、文章で相談したときは Gemini が判定した type が入る。
-// 「今日は大丈夫だった」は強さを聞かないので intensity が無い
 export type Answer = { category?: Category; type?: StressType; intensity?: Intensity }
 
 export type StressRecord = {
@@ -46,6 +45,8 @@ export type PetState = {
   affection: Affection
   // いま表示しているお部屋
   roomId: string
+  // 最後に相談が成立した時刻（ISO）。3時間のクールタイムの起点。未設定ならクールタイム無し
+  lastConsultAt?: string
   // プレイヤーがかえた呼び方。未設定なら初期の呼び方（経験値レベルで決まる）
   playerName?: string
   // チュートリアルの最後で、プレイヤーがつけたペットの名前
