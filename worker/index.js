@@ -33,7 +33,8 @@ const SCHEMA = {
         type: 'object',
         properties: {
           type: { type: 'string', enum: ['physical', 'chemical', 'psychological', 'biological'] },
-          intensity: { type: 'integer', enum: [1, 2, 3] },
+          // Gemini の enum は文字列しか受け付けないので、文字列で受け取って後で数字に直す
+          intensity: { type: 'string', enum: ['1', '2', '3'] },
         },
         required: ['type', 'intensity'],
       },
@@ -91,7 +92,9 @@ export default {
       const data = await res.json()
       const parsed = JSON.parse(data.candidates[0].content.parts[0].text)
       if (parsed.result === 'good_day' || parsed.result === 'not_stress') return json({ result: parsed.result })
-      const items = (parsed.items ?? []).filter((i) => TYPES.includes(i.type) && [1, 2, 3].includes(i.intensity))
+      const items = (parsed.items ?? [])
+        .map((i) => ({ type: i.type, intensity: Number(i.intensity) }))
+        .filter((i) => TYPES.includes(i.type) && [1, 2, 3].includes(i.intensity))
       if (parsed.result !== 'stress' || items.length === 0) return json({ error: 'unexpected response' }, 502)
       return json({ result: 'stress', items })
     } catch (e) {
