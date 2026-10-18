@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { AffectionGauge } from '../components/AffectionGauge'
 import { LevelGauge } from '../components/LevelGauge'
 import { Pet } from '../components/Pet'
 import { SpeechBubble } from '../components/SpeechBubble'
@@ -10,6 +11,7 @@ import {
   intensityQuestion,
   responseExpression,
   responseLines,
+  roomUnlockedLine,
 } from '../dialogue'
 import type { ConsultResult } from '../growth'
 import type { Answer, Category, Intensity, PetState } from '../types'
@@ -45,14 +47,15 @@ export function Consult({ pet: current, onFinish, onDone }: Props) {
     })
 
   if (step === 'response' && result) {
-    const { pet, leveledUp } = result
+    const { pet, leveledUp, roomUnlocked } = result
     return (
       <main className="screen consult">
-        <SpeechBubble lines={responseLines(answers, leveledUp)} />
+        <SpeechBubble lines={[...responseLines(answers, leveledUp), ...(roomUnlocked ? [roomUnlockedLine] : [])]} />
         <div className="pet-stage">
           <Pet level={pet.level} branch={pet.branch} expression={responseExpression(answers)} />
         </div>
         <LevelGauge experience={pet.experience} level={pet.level} />
+        <AffectionGauge pats={pet.affection.pats} />
         <button className="primary" onClick={onDone}>
           ホームへ戻る
         </button>
