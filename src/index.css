@@ -233,8 +233,7 @@ button:focus-visible {
 .hearts span {
   position: absolute;
   bottom: 40%;
-  color: #e0546b;
-  font-size: 1.6rem;
+  line-height: 0;
   opacity: 0;
   animation: float-up 1.2s ease-out forwards;
 }
