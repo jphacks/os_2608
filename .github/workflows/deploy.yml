@@ -25,6 +25,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+        env:
+          # 文章の判定を中継するサーバーのURL（docs/gemini-setup.md）。未設定なら文章入力は出ない
+          VITE_CONSULT_API_URL: ${{ vars.VITE_CONSULT_API_URL }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

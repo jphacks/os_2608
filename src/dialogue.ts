@@ -12,6 +12,14 @@ export const categoryOptions: { value: Category; label: string }[] = [
   { value: 'good_day', label: '今日は大丈夫だった' },
 ]
 
+export const textPlaceholder = '今日のもやもやを、書いてみてね'
+export const textSend = '食べてもらう'
+export const textWarning = '※ 書いた文章はAIで判定します。名前や住所など、個人情報は書かないでね。'
+export const textOr = 'または、選んで答える'
+export const notStressLine = 'もやもやを食べさせてほしいな'
+export const textErrorLine = 'うまく聞き取れなかったよ。もう一度書くか、選んで教えてね。'
+export const textWaitingLine = 'もぐもぐ…'
+
 export const intensityQuestion = 'それぞれ、どのくらいつらかった？'
 export const intensityOptions: { value: Intensity; label: string }[] = [
   { value: 1, label: '少しだけ' },
