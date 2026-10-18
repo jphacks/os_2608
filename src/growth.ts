@@ -7,7 +7,7 @@ export const POINTS_PER_LEVEL = 30
 // 出来事 → 4系統の仮の対応。ヒカゲさんの対応表ができたら差し替える。
 // 化学に当たる選択肢は、いまは無い
 // 「いいことがあった」は系統に数えない（レベルには数える）
-const categoryTypes: Record<Category, StressType | undefined> = {
+export const categoryTypes: Record<Category, StressType | undefined> = {
   commute: 'physical',
   task: 'psychological',
   relationships: 'psychological',

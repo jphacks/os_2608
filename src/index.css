@@ -707,3 +707,100 @@ button:disabled {
   color: var(--muted, #8a7a66);
   font-size: 0.75rem;
 }
+
+/* 振り返り: 表示の切り替えと、1日のようすグラフ */
+.review-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.review-tabs .primary {
+  flex: 1;
+  padding: 8px;
+  opacity: 0.6;
+}
+
+.review-tabs .primary[aria-pressed='true'] {
+  opacity: 1;
+}
+
+.day-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.day-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  font-size: 1.2rem;
+}
+
+.day-nav .icon-button {
+  width: 44px;
+  height: 44px;
+  font-size: 1rem;
+}
+
+.day-nav .icon-button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.day-chart {
+  width: 100%;
+  background: var(--panel);
+  border: 4px solid var(--line);
+}
+
+.day-grid {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.day-label {
+  font-size: 9px;
+  fill: var(--text);
+}
+
+.day-point-label {
+  font-size: 8px;
+  fill: var(--text);
+  /* 線と重なっても読めるよう、白いふちを付ける */
+  paint-order: stroke;
+  stroke: var(--panel);
+  stroke-width: 3px;
+}
+
+.day-line {
+  stroke: var(--line);
+  stroke-width: 2;
+  stroke-linejoin: miter;
+}
+
+.day-dot {
+  fill: var(--line);
+}
+
+.history {
+  background: var(--panel);
+  border: 4px solid var(--line);
+  padding: 8px 12px;
+}
+
+.history-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+.history-empty {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
