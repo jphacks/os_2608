@@ -9,7 +9,8 @@ import { Pet } from '../components/Pet'
 import { SpeechBubble } from '../components/SpeechBubble'
 import { AffectionGauge } from '../components/AffectionGauge'
 import { pat } from '../affection'
-import { greeting, lookLine, petLimitLine, petLine, playerCallName, roomUnlockedLine } from '../dialogue'
+import { isFull } from '../cooldown'
+import { greeting, lookLine, petLimitLine, petLine, pickFullLine, playerCallName, roomUnlockedLine } from '../dialogue'
 import { findRoom } from '../rooms'
 import type { Expression, PetState } from '../types'
 
@@ -76,6 +77,17 @@ export function Home({ pet, onChangePet, onConsult, onRooms, onReview }: Props) 
     setLines(result.leveledUp ? [petLine(callName), roomUnlockedLine] : [petLine(callName)])
     setExpression('happy')
     setHeartKey((k) => k + 1)
+  }
+
+  // クールタイム中は相談に進まず、ペットが「お腹いっぱい」と言う
+  const onEat = () => {
+    if (!isFull(pet)) {
+      onConsult()
+      return
+    }
+    setLines([pickFullLine()])
+    setExpression('rest')
+    setShowAffection(false)
   }
 
   const onLook = () => {
@@ -160,7 +172,7 @@ export function Home({ pet, onChangePet, onConsult, onRooms, onReview }: Props) 
 
       <footer className="home-bottom">
         {SHOW_LOOK_BUTTON && <button onClick={onLook}>ようすを見る</button>}
-        <button className="primary" onClick={onConsult}>
+        <button className="primary" onClick={onEat}>
           もやもやを食べてもらう
         </button>
         <p className="note">

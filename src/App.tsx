@@ -28,7 +28,7 @@ export function App() {
   const onFinishConsult = (answers: Answer[]) => {
     addRecord({ id: newId(), createdAt: new Date().toISOString(), answers })
     const result = applyConsult(pet, answers)
-    updatePet(result.pet)
+    updatePet({ ...result.pet, lastConsultAt: new Date().toISOString() })
     return result
   }
 
