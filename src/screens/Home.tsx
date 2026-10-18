@@ -167,7 +167,7 @@ export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
       <footer className="home-bottom">
         {SHOW_LOOK_BUTTON && <button onClick={onLook}>ようすを見る</button>}
         <button className="primary" onClick={onConsult}>
-          ストレスを食べてもらう
+          もやもやを食べてもらう
         </button>
         <p className="note">
           記録はこの端末のブラウザ内に保存されます。これは医療的な診断を行うアプリではなく、日々の気持ちを振り返るためのサポートです。
