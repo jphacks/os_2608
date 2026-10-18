@@ -5,13 +5,12 @@ import type { Answer, Category, Level, PetState, StressType } from './types'
 export const POINTS_PER_LEVEL = 30
 
 // 出来事 → 4系統の仮の対応。ヒカゲさんの対応表ができたら差し替える。
-// 「今日は大丈夫だった」は系統に数えない（レベルには数える）。化学に当たる選択肢は、いまは無い
-const categoryTypes: Record<Category, StressType | undefined> = {
+// 化学に当たる選択肢は、いまは無い
+const categoryTypes: Record<Category, StressType> = {
   commute: 'physical',
   task: 'psychological',
   relationships: 'psychological',
   tired: 'biological',
-  good_day: undefined,
 }
 
 export function levelFor(points: number): Level {

@@ -1,4 +1,4 @@
-import type { Category, Intensity, PetState, StressRecord } from './types'
+import type { Intensity, PetState, StressRecord } from './types'
 
 // 保存形式を変えたときに古いデータと混ざらないよう、キーにバージョンを付ける
 const RECORDS_KEY = 'pet-stress-app/v1/records'
@@ -31,7 +31,7 @@ function write(key: string, value: unknown) {
 }
 
 // 古い形式（category / categories と、1つだけのつらさ intensity）の記録を、answers にそろえる
-type LegacyRecord = Partial<StressRecord> & { category?: Category; categories?: Category[]; intensity?: Intensity }
+type LegacyRecord = Partial<StressRecord> & { category?: string; categories?: string[]; intensity?: Intensity }
 
 export function loadRecords(): StressRecord[] {
   const records = read<LegacyRecord[]>(RECORDS_KEY, [])
@@ -39,10 +39,7 @@ export function loadRecords(): StressRecord[] {
   return records.map((r) => {
     if (r.answers) return r as StressRecord
     const categories = r.categories ?? (r.category ? [r.category] : [])
-    const answers = categories.map((category) => ({
-      category,
-      intensity: category === 'good_day' ? undefined : r.intensity,
-    }))
+    const answers = categories.map((category) => ({ category, intensity: r.intensity })) as StressRecord['answers']
     return { id: r.id ?? '', createdAt: r.createdAt ?? '', answers }
   })
 }
