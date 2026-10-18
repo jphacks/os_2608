@@ -1,4 +1,4 @@
-import { consultAffection } from './affection'
+import { consultAffection, todayString } from './affection'
 import type { Answer, Category, Level, PetState, StressType } from './types'
 
 // 出来事を1つ選ぶごとに +1。この数たまるとレベルが1つ上がる
@@ -27,12 +27,29 @@ export function levelProgress(points: number): number {
   return points % POINTS_PER_LEVEL
 }
 
-// いちばん多く数えた系統。同数なら、直近に数えたものを選ぶ。1つも無ければ undefined
-export function trendOf(pet: Pick<PetState, 'stats' | 'recentTypes'>): StressType | undefined {
-  const max = Math.max(...Object.values(pet.stats))
-  if (max <= 0) return undefined
-  const top = (Object.keys(pet.stats) as StressType[]).filter((t) => pet.stats[t] === max)
-  return top.sort((a, b) => pet.recentTypes.lastIndexOf(b) - pet.recentTypes.lastIndexOf(a))[0]
+// 見た目の色（系統）をくじ引きで決める。4系統の累計点数の割合がそのまま当たる確率で、点数が0の系統は選ばれない。
+// 1つも数えていなければ undefined。rng は 0以上1未満の乱数（テストで差し替える）
+export function pickBranch(stats: PetState['stats'], rng: () => number = Math.random): StressType | undefined {
+  const types = (Object.keys(stats) as StressType[]).filter((t) => stats[t] > 0)
+  const total = types.reduce((sum, t) => sum + stats[t], 0)
+  if (total <= 0) return undefined
+  let pick = rng() * total
+  for (const t of types) {
+    pick -= stats[t]
+    if (pick < 0) return t
+  }
+  return types[types.length - 1]
+}
+
+// 色を決め直して、その日（端末の日付）を記録する。点数が無ければ、いまの色のまま
+export function rollBranch(pet: PetState, rng?: () => number, now = new Date()): PetState {
+  return { ...pet, branch: pickBranch(pet.stats, rng) ?? pet.branch, branchDate: todayString(now) }
+}
+
+// アプリを開いたとき、Lv2以降で今日まだ決め直していなければ、色を1回くじ引きする
+export function refreshDailyBranch(pet: PetState, rng?: () => number, now = new Date()): PetState {
+  if (pet.level < 2 || pet.branchDate === todayString(now)) return pet
+  return rollBranch(pet, rng, now)
 }
 
 export type ConsultResult = {
@@ -57,8 +74,8 @@ export function applyConsult(pet: PetState, answers: Answer[]): ConsultResult {
   const experience = pet.experience + answers.length
   const level = levelFor(experience)
   const bond = consultAffection(pet.affection)
-  const next: PetState = { ...pet, experience, stats, recentTypes, level, affection: bond.affection }
-  // 見た目の差分は、レベルが上がるたび（Lv1→2、Lv2→3、Lv4以降も）に、そのときの累計で最多の傾向で決め直す
-  if (level > pet.level && level >= 2) next.branch = trendOf(next) ?? pet.branch
+  let next: PetState = { ...pet, experience, stats, recentTypes, level, affection: bond.affection }
+  // 見た目の色は、進化した瞬間（Lv1→2、Lv2→3）に1回くじ引きする。Lv4以降は、1日1回のくじ引きだけ
+  if (pet.level < 3 && level >= 2 && level > pet.level) next = rollBranch(next)
   return { pet: next, gained: answers.length, leveledUp: level > pet.level, roomUnlocked: bond.leveledUp }
 }
