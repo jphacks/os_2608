@@ -618,6 +618,7 @@ button:disabled {
   text-align: center;
   background: rgba(255, 255, 255, 0.85);
   padding: 4px;
+}
 
 .choice-row {
   display: flex;
