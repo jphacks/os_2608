@@ -49,8 +49,8 @@ export type ConsultResult = {
 export function applyConsult(pet: PetState, answers: Answer[]): ConsultResult {
   const stats = { ...pet.stats }
   let recentTypes = pet.recentTypes
-  for (const { category, intensity } of answers) {
-    const type = categoryTypes[category]
+  for (const { category, type: answerType, intensity } of answers) {
+    const type = answerType ?? (category && categoryTypes[category])
     if (!type) continue
     stats[type] += intensity ?? 1
     recentTypes = [...recentTypes.filter((t) => t !== type), type]

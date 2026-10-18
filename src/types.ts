@@ -7,8 +7,9 @@ export type Intensity = 1 | 2 | 3
 // ストレスの4分類。アプリ内部で判定し、成長の方向に使う
 export type StressType = 'physical' | 'chemical' | 'psychological' | 'biological'
 
-// 選んだ出来事1つぶんの回答。「今日は大丈夫だった」は強さを聞かないので intensity が無い
-export type Answer = { category: Category; intensity?: Intensity }
+// 1つぶんの回答。選択肢で答えたときは category、文章で相談したときは Gemini が判定した type が入る。
+// 「今日は大丈夫だった」は強さを聞かないので intensity が無い
+export type Answer = { category?: Category; type?: StressType; intensity?: Intensity }
 
 export type StressRecord = {
   id: string

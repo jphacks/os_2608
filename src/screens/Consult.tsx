@@ -9,8 +9,16 @@ import {
   intensityOptions,
   intensityQuestion,
   responseExpression,
+  notStressLine,
   responseLines,
+  textErrorLine,
+  textOr,
+  textPlaceholder,
+  textSend,
+  textWaitingLine,
+  textWarning,
 } from '../dialogue'
+import { analyzeText, consultApiUrl } from '../gemini'
 import type { ConsultResult } from '../growth'
 import type { Answer, Category, Intensity, PetState } from '../types'
 
@@ -30,10 +38,33 @@ export function Consult({ pet: current, onFinish, onDone }: Props) {
   const [intensities, setIntensities] = useState<Partial<Record<Category, Intensity>>>({})
   const [answers, setAnswers] = useState<Answer[]>([])
   const [result, setResult] = useState<ConsultResult>()
+  // 文章での相談: 入力中の文章、判定中か、判定のあとにペットが言う台詞
+  const [text, setText] = useState('')
+  const [analyzing, setAnalyzing] = useState(false)
+  const [notice, setNotice] = useState<string>()
   const finish = (finished: Answer[]) => {
     setAnswers(finished)
     setResult(onFinish(finished))
     setStep('response')
+  }
+
+  const sendText = async () => {
+    setAnalyzing(true)
+    setNotice(undefined)
+    try {
+      const analyzed = await analyzeText(text.trim())
+      if (analyzed.kind === 'not_stress') {
+        // ストレスの話ではなかったので、もう一度入力してもらう
+        setText('')
+        setNotice(notStressLine)
+      } else {
+        finish(analyzed.answers)
+      }
+    } catch {
+      setNotice(textErrorLine)
+    } finally {
+      setAnalyzing(false)
+    }
   }
 
   const toggle = (value: Category) =>
@@ -62,10 +93,29 @@ export function Consult({ pet: current, onFinish, onDone }: Props) {
 
   return (
     <main className="screen consult">
-      <SpeechBubble lines={[step === 'category' ? categoryQuestion : intensityQuestion]} />
+      <SpeechBubble
+        lines={[analyzing ? textWaitingLine : (notice ?? (step === 'category' ? categoryQuestion : intensityQuestion))]}
+      />
       <div className="pet-stage small">
         <Pet level={current.level} branch={current.branch} expression="normal" scale={4} />
       </div>
+      {step === 'category' && consultApiUrl && (
+        <div className="text-consult">
+          <textarea
+            value={text}
+            maxLength={300}
+            rows={3}
+            placeholder={textPlaceholder}
+            disabled={analyzing}
+            onChange={(e) => setText(e.target.value)}
+          />
+          <p className="note">{textWarning}</p>
+          <button className="primary" disabled={analyzing || text.trim() === ''} onClick={sendText}>
+            {textSend}
+          </button>
+          <p className="note or">{textOr}</p>
+        </div>
+      )}
       <div className="choices">
         {step === 'category' &&
           categoryOptions.map((o) => (
