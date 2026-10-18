@@ -82,7 +82,7 @@ export type ConsultResult = {
 }
 
 // 相談の結果をペットの状態に反映する
-// レベルは、選んだ出来事1つにつき +1。系統は、つらさ（少しだけ=1、まあまあ=2、かなりつらい=3）のぶんだけ数える
+// レベルは、選んだ出来事1つにつき +1。系統は、つらさ（ちょっとだけ=1、まあまあ=2、かなりつらい=3）のぶんだけ数える
 export function applyConsult(pet: PetState, answers: Answer[]): ConsultResult {
   const stats = { ...pet.stats }
   let recentTypes = pet.recentTypes

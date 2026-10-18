@@ -10,6 +10,8 @@ import { SpeechBubble } from '../components/SpeechBubble'
 import { AffectionGauge } from '../components/AffectionGauge'
 import { pat } from '../affection'
 import { isFull } from '../cooldown'
+import { dayKey } from '../dayChart'
+import { loadRecords } from '../storage'
 import { greeting, lookLine, petLimitLine, petLine, pickFullLine, playerCallName, roomUnlockedLine } from '../dialogue'
 import { findRoom } from '../rooms'
 import type { Expression, PetState } from '../types'
@@ -31,9 +33,15 @@ const STROKES_PER_PAT = 4
 // なでてから親密度ゲージを消すまでの時間
 const AFFECTION_HIDE_MS = 2000
 
+// 今日より前の日に相談した記録があれば、2日目以降とみなす
+function hasEarlierRecord() {
+  const today = dayKey(new Date())
+  return loadRecords().some((r) => r.createdAt && dayKey(new Date(r.createdAt)) < today)
+}
+
 export function Home({ pet, onChangePet, onConsult, onRooms, onReview }: Props) {
   const callName = playerCallName(pet.level, pet.playerName)
-  const [lines, setLines] = useState<string[]>([greeting(callName, pet.petName)])
+  const [lines, setLines] = useState<string[]>([greeting(callName, pet.petName, hasEarlierRecord())])
   const [expression, setExpression] = useState<Expression>('normal')
   // 親密度ゲージはなでたときだけ表示する
   const [showAffection, setShowAffection] = useState(false)
