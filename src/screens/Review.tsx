@@ -12,30 +12,30 @@ const rows: { type: StressType; name: string }[] = [
   { type: 'biological', name: '生物的ストレス' },
 ]
 
-// これまでの相談で数えた、4系統それぞれのつらさの点数の合計を横棒で見せる
+// これまでの相談で数えた4系統のつらさの点数を、合計に対する割合（%）の横棒で見せる
 export function Review({ pet, onDone }: Props) {
-  const max = Math.max(1, ...rows.map((r) => pet.stats[r.type]))
+  const total = rows.reduce((sum, r) => sum + pet.stats[r.type], 0)
   return (
     <main className="screen review">
       <h1 className="review-title">ふりかえり</h1>
       <ul className="review-list">
         {rows.map(({ type, name }) => {
-          const points = pet.stats[type]
+          const percent = total === 0 ? 0 : Math.round((pet.stats[type] / total) * 100)
           return (
             <li key={type} className="review-row">
               <div className="status-row">
                 <span>{name}</span>
-                <span>{points}点</span>
+                <span>{percent}%</span>
               </div>
               <div
                 className="review-bar"
                 role="progressbar"
                 aria-label={name}
-                aria-valuenow={points}
+                aria-valuenow={percent}
                 aria-valuemin={0}
-                aria-valuemax={max}
+                aria-valuemax={100}
               >
-                <div className={`review-fill ${type}`} style={{ width: `${(points / max) * 100}%` }} />
+                <div className={`review-fill ${type}`} style={{ width: `${percent}%` }} />
               </div>
             </li>
           )

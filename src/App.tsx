@@ -3,11 +3,12 @@ import { Consult } from './screens/Consult'
 import { Home } from './screens/Home'
 import { Review } from './screens/Review'
 import { Rooms } from './screens/Rooms'
+import { Tutorial } from './screens/Tutorial'
 import { applyConsult, refreshDailyBranch } from './growth'
 import { addRecord, loadPetState, savePetState } from './storage'
 import type { Answer, PetState } from './types'
 
-type Screen = 'home' | 'consult' | 'rooms' | 'review'
+type Screen = 'home' | 'consult' | 'rooms' | 'review' | 'tutorial'
 
 function newId() {
   return typeof crypto !== 'undefined' && 'randomUUID' in crypto
@@ -17,7 +18,6 @@ function newId() {
 
 // GitHub Pages では直接URLを開くと404になりやすいため、ルーターは使わず状態で画面を切り替える
 export function App() {
-  const [screen, setScreen] = useState<Screen>('home')
   // 1日1回、アプリを開いたときに色をくじ引きし直す
   const [pet, setPet] = useState(() => {
     const loaded = loadPetState()
@@ -25,6 +25,8 @@ export function App() {
     if (refreshed !== loaded) savePetState(refreshed)
     return refreshed
   })
+  // チュートリアルを最後まで見ていなければ、最初に始める
+  const [screen, setScreen] = useState<Screen>(pet.tutorialDone ? 'home' : 'tutorial')
 
   const updatePet = (next: PetState) => {
     savePetState(next)
@@ -38,6 +40,19 @@ export function App() {
     return result
   }
 
+  if (screen === 'tutorial') {
+    return (
+      <Tutorial
+        roomId={pet.roomId}
+        petName={pet.petName}
+        onFinish={(petName) => {
+          updatePet({ ...pet, petName, tutorialDone: true })
+          setScreen('home')
+        }}
+        onSkip={() => setScreen('home')}
+      />
+    )
+  }
   if (screen === 'consult') {
     return <Consult pet={pet} onFinish={onFinishConsult} onDone={() => setScreen('home')} />
   }
@@ -53,6 +68,7 @@ export function App() {
           setScreen('home')
         }}
         onRename={(playerName) => updatePet({ ...pet, playerName: playerName || undefined })}
+        onTutorial={() => setScreen('tutorial')}
         onDone={() => setScreen('home')}
       />
     )

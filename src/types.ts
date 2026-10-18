@@ -51,6 +51,10 @@ export type PetState = {
   lastConsultAt?: string
   // プレイヤーがかえた呼び方。未設定なら初期の呼び方（経験値レベルで決まる）
   playerName?: string
+  // チュートリアルの最後で、プレイヤーがつけたペットの名前
+  petName?: string
+  // チュートリアルを最後まで見たか。スキップしたときは立てず、次に開いたときもう一度始める
+  tutorialDone?: boolean
 }
 
 export type Expression = 'normal' | 'happy' | 'worried' | 'rest'

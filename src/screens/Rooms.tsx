@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { HelpIcon } from '../components/HelpIcon'
 import { SpeechBubble } from '../components/SpeechBubble'
 import { NAME_UNLOCK_LEVEL, affectionLevel, gaugeRatio } from '../affection'
 import { PLAYER_NAME_MAX, playerCallName } from '../dialogue'
@@ -9,10 +10,11 @@ type Props = {
   pet: PetState
   onSelect: (roomId: string) => void
   onRename: (name: string) => void
+  onTutorial: () => void
   onDone: () => void
 }
 
-export function Rooms({ pet, onSelect, onRename, onDone }: Props) {
+export function Rooms({ pet, onSelect, onRename, onTutorial, onDone }: Props) {
   const level = affectionLevel(pet.affection.pats)
   const [previewId, setPreviewId] = useState(pet.roomId)
   const ratio = gaugeRatio(pet.affection.pats)
@@ -22,6 +24,9 @@ export function Rooms({ pet, onSelect, onRename, onDone }: Props) {
   return (
     <main className={`screen rooms room ${previewId}`}>
       <div className="rooms-veil" aria-hidden="true" />
+      <button className="icon-button help-button" onClick={onTutorial} aria-label="チュートリアル">
+        <HelpIcon />
+      </button>
       <section className="status affection" aria-label="なかよしゲージ">
         <div className="status-row">
           <span className="level">なかよし Lv {level}</span>
