@@ -1,7 +1,11 @@
+import { useState } from 'react'
+import { AffectionGauge } from '../components/AffectionGauge'
+import { buy, ownedPoints, shopItems } from '../shop'
 import type { PetState, StressType } from '../types'
 
 type Props = {
   pet: PetState
+  onUpdate: (pet: PetState) => void
   onDone: () => void
 }
 
@@ -13,7 +17,9 @@ const rows: { type: StressType; name: string }[] = [
 ]
 
 // これまでの相談で数えた4系統のつらさの点数を、合計に対する割合（%）の横棒で見せる
-export function Review({ pet, onDone }: Props) {
+export function Review({ pet, onUpdate, onDone }: Props) {
+  const [message, setMessage] = useState('')
+  const owned = ownedPoints(pet)
   const total = rows.reduce((sum, r) => sum + pet.stats[r.type], 0)
   return (
     <main className="screen review">
@@ -41,6 +47,39 @@ export function Review({ pet, onDone }: Props) {
           )
         })}
       </ul>
+      <section className="shop" aria-label="ショップ">
+        <div className="status-row">
+          <h2 className="shop-title">ショップ</h2>
+          <span>{owned}ポイント</span>
+        </div>
+        <ul className="shop-list">
+          {shopItems.map((item) => (
+            <li key={item.id} className="shop-item">
+              <span>
+                {item.name}（{item.price}ポイント）
+              </span>
+              <button
+                className="primary"
+                disabled={owned < item.price}
+                onClick={() => {
+                  const result = buy(pet, item)
+                  if (!result) return
+                  onUpdate(result.pet)
+                  setMessage(
+                    result.leveledUp
+                      ? `${item.name}をあげた！ 新しいお部屋が開いたよ！`
+                      : `${item.name}をあげた！ なかよしがふえたよ`,
+                  )
+                }}
+              >
+                あげる
+              </button>
+            </li>
+          ))}
+        </ul>
+        {message && <p className="shop-message">{message}</p>}
+        <AffectionGauge pats={pet.affection.pats} />
+      </section>
       <button className="link" onClick={onDone}>
         ホームへ戻る
       </button>

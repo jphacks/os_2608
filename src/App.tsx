@@ -57,7 +57,7 @@ export function App() {
     return <Consult pet={pet} onFinish={onFinishConsult} onDone={() => setScreen('home')} />
   }
   if (screen === 'review') {
-    return <Review pet={pet} onDone={() => setScreen('home')} />
+    return <Review pet={pet} onUpdate={updatePet} onDone={() => setScreen('home')} />
   }
   if (screen === 'rooms') {
     return (
