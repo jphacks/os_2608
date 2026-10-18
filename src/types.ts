@@ -39,7 +39,7 @@ export type PetState = {
   stats: StressStats
   // 系統を数えた順（新しいほど後ろ）。最多が同数のとき、直近のものを選ぶのに使う
   recentTypes: StressType[]
-  // 最初に進化したとき（Lv1→2）の傾向。以後は変わらない。傾向が無ければ未設定
+  // 見た目の系統。進化するたび（Lv1→2、Lv2→3）に、そのときの累計で最多の傾向で決め直す。傾向が無ければ未設定
   branch?: StressType
   affection: Affection
   // いま表示しているお部屋
