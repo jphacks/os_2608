@@ -32,7 +32,7 @@ const AFFECTION_HIDE_MS = 2000
 
 export function Home({ pet, onChangePet, onConsult, onRooms, onReview }: Props) {
   const callName = playerCallName(pet.level, pet.playerName)
-  const [lines, setLines] = useState<string[]>([greeting(callName)])
+  const [lines, setLines] = useState<string[]>([greeting(callName, pet.petName)])
   const [expression, setExpression] = useState<Expression>('normal')
   // 親密度ゲージはなでたときだけ表示する
   const [showAffection, setShowAffection] = useState(false)
