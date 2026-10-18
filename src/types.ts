@@ -44,6 +44,14 @@ export type PetState = {
   branch?: StressType
   // 最後に色をくじ引きした日（端末の日付 YYYY-MM-DD）
   branchDate?: string
+  // ショップの色アイテムで「確定」した色。あるあいだは毎日のくじ引きをせず、この色に固定する
+  branchLock?: StressType
+  // 次の色くじ引きで当たりやすくする色（色アイテムを使うと入り、くじ引きで使い切る）
+  branchBoost?: StressType
+  // 色アイテムを同じ色で続けて使った日数と、最後に使った日（端末の日付 YYYY-MM-DD）
+  // 色アイテムを最後に使った日。1日1回まで
+  colorItemDate?: string
+  colorStreak?: { type: StressType; days: number; lastDate: string }
   affection: Affection
   // いま表示しているお部屋
   roomId: string

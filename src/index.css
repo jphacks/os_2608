@@ -682,6 +682,9 @@ button:disabled {
 }
 
 .shop-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -697,4 +700,10 @@ button:disabled {
 .shop-message {
   margin: 0;
   text-align: center;
+}
+
+.shop-reason {
+  display: block;
+  color: var(--muted, #8a7a66);
+  font-size: 0.75rem;
 }

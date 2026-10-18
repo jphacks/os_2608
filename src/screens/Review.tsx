@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { AffectionGauge } from '../components/AffectionGauge'
-import { buy, ownedPoints, shopItems } from '../shop'
+import { buy, ownedPoints, shopItems, unavailableReason } from '../shop'
 import type { PetState, StressType } from '../types'
 
 type Props = {
@@ -53,29 +53,29 @@ export function Review({ pet, onUpdate, onDone }: Props) {
           <span>{owned}ポイント</span>
         </div>
         <ul className="shop-list">
-          {shopItems.map((item) => (
-            <li key={item.id} className="shop-item">
-              <span>
-                {item.name}（{item.price}ポイント）
-              </span>
-              <button
-                className="primary"
-                disabled={owned < item.price}
-                onClick={() => {
-                  const result = buy(pet, item)
-                  if (!result) return
-                  onUpdate(result.pet)
-                  setMessage(
-                    result.leveledUp
-                      ? `${item.name}をあげた！ 新しいお部屋が開いたよ！`
-                      : `${item.name}をあげた！ なかよしがふえたよ`,
-                  )
-                }}
-              >
-                あげる
-              </button>
-            </li>
-          ))}
+          {shopItems.map((item) => {
+            const reason = unavailableReason(pet, item)
+            return (
+              <li key={item.id} className="shop-item">
+                <span>
+                  {item.name}（{item.price}ポイント）
+                  {reason && <small className="shop-reason">{reason}</small>}
+                </span>
+                <button
+                  className="primary"
+                  disabled={!!reason}
+                  onClick={() => {
+                    const result = buy(pet, item)
+                    if (!result) return
+                    onUpdate(result.pet)
+                    setMessage(result.message)
+                  }}
+                >
+                  あげる
+                </button>
+              </li>
+            )
+          })}
         </ul>
         {message && <p className="shop-message">{message}</p>}
         <AffectionGauge pats={pet.affection.pats} />

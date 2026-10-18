@@ -27,23 +27,42 @@ export function levelProgress(points: number): number {
   return points % POINTS_PER_LEVEL
 }
 
+// 色アイテムで、その色が当たる確率に足す割合（0.5 = +50%）
+export const BOOST_RATE = 0.5
+
 // 見た目の色（系統）をくじ引きで決める。4系統の累計点数の割合がそのまま当たる確率で、点数が0の系統は選ばれない。
-// 1つも数えていなければ undefined。rng は 0以上1未満の乱数（テストで差し替える）
-export function pickBranch(stats: PetState['stats'], rng: () => number = Math.random): StressType | undefined {
-  const types = (Object.keys(stats) as StressType[]).filter((t) => stats[t] > 0)
-  const total = types.reduce((sum, t) => sum + stats[t], 0)
-  if (total <= 0) return undefined
-  let pick = rng() * total
+// boost の色は確率に +50%（上限100%）し、ほかの色は残りを元の割合で分ける。点数が0の色でも当たるようになる。
+// 1つも数えていなくて boost も無ければ undefined。rng は 0以上1未満の乱数（テストで差し替える）
+export function pickBranch(
+  stats: PetState['stats'],
+  rng: () => number = Math.random,
+  boost?: StressType,
+): StressType | undefined {
+  const total = Object.values(stats).reduce((sum, v) => sum + v, 0)
+  const types = (Object.keys(stats) as StressType[]).filter((t) => stats[t] > 0 || t === boost)
+  if (total <= 0 && !boost) return undefined
+  const base = (t: StressType) => (total > 0 ? stats[t] / total : 0)
+  const boosted = boost ? Math.min(1, base(boost) + BOOST_RATE) : 0
+  const chance = (t: StressType) => {
+    if (!boost) return base(t)
+    if (t === boost) return boosted
+    return base(boost) >= 1 ? 0 : (base(t) * (1 - boosted)) / (1 - base(boost))
+  }
+  let pick = rng()
   for (const t of types) {
-    pick -= stats[t]
+    pick -= chance(t)
     if (pick < 0) return t
   }
   return types[types.length - 1]
 }
 
-// 色を決め直して、その日（端末の日付）を記録する。点数が無ければ、いまの色のまま
+// 色を決め直して、その日（端末の日付）を記録する。確定中ならその色のまま。点数が無ければ、いまの色のまま。
+// 色アイテムの効果（branchBoost）は、この1回で使い切る
 export function rollBranch(pet: PetState, rng?: () => number, now = new Date()): PetState {
-  return { ...pet, branch: pickBranch(pet.stats, rng) ?? pet.branch, branchDate: todayString(now) }
+  const next = { ...pet, branchDate: todayString(now) }
+  delete next.branchBoost
+  if (pet.branchLock) return { ...next, branch: pet.branchLock }
+  return { ...next, branch: pickBranch(pet.stats, rng, pet.branchBoost) ?? pet.branch }
 }
 
 // アプリを開いたとき、Lv2以降で今日まだ決め直していなければ、色を1回くじ引きする
