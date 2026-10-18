@@ -3,7 +3,7 @@ import { Consult } from './screens/Consult'
 import { Home } from './screens/Home'
 import { Review } from './screens/Review'
 import { Rooms } from './screens/Rooms'
-import { applyConsult } from './growth'
+import { applyConsult, refreshDailyBranch } from './growth'
 import { addRecord, loadPetState, savePetState } from './storage'
 import type { Answer, PetState } from './types'
 
@@ -18,7 +18,13 @@ function newId() {
 // GitHub Pages では直接URLを開くと404になりやすいため、ルーターは使わず状態で画面を切り替える
 export function App() {
   const [screen, setScreen] = useState<Screen>('home')
-  const [pet, setPet] = useState(loadPetState)
+  // 1日1回、アプリを開いたときに色をくじ引きし直す
+  const [pet, setPet] = useState(() => {
+    const loaded = loadPetState()
+    const refreshed = refreshDailyBranch(loaded)
+    if (refreshed !== loaded) savePetState(refreshed)
+    return refreshed
+  })
 
   const updatePet = (next: PetState) => {
     savePetState(next)
