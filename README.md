@@ -26,18 +26,29 @@
 ## 開発技術
 ### 活用した技術
 #### API・データ
-* **Google Gemini API** (`gemini-3.1-flash-lite`)
-* 
+* Google Gemini API (`gemini-3.1-flash-lite`)
+* Cloudflare Workers
+* ブラウザの localStorage
 
 #### フレームワーク・ライブラリ・モジュール
-* 
-* 
+* React 19
+* TypeScript
+* Vite
+* @fontsource/dotgothic16
+* 素のCSS
+* GitHub Actions
+* GitHub Pages
 
 #### デバイス
-* 
-* 
+* スマートフォンのブラウザ('Safari')
 
 ### 独自技術
 #### ハッカソンで開発した独自機能・技術
-* 独自で開発したものの内容をこちらに記載してください
-* 特に力を入れた部分をファイルリンク、またはcommit_idを記載してください。
+* **ストレス4系統の判定と集計** [src/growth.ts](src/growth.ts) / [worker/index.js](worker/index.js)
+* **相談の画面**[src/screens/Consult.tsx](src/screens/Consult.tsx) / [src/choices.ts](src/choices.ts)
+* **進化の色のくじ引き** [src/growth.ts](src/growth.ts)
+* **親密度・お部屋** [src/affection.ts](src/affection.ts) / [src/rooms.ts](src/rooms.ts)
+* **振り返り画面** [src/screens/Review.tsx](src/screens/Review.tsx) / [src/dayChart.ts](src/dayChart.ts)
+* **ショップ** [src/shop.ts](src/shop.ts)
+* **相談のクールタイム** [src/cooldown.ts](src/cooldown.ts)
+* **チュートリアル** [src/screens/Tutorial.tsx](src/screens/Tutorial.tsx)
