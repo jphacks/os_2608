@@ -11,8 +11,6 @@ export const initialPetState: PetState = {
   recentTypes: [],
   affection: { pats: 0, patsToday: 0, lastPatDate: '' },
   roomId: 'room-1',
-  loginDays: 0,
-  lastLoginDate: '',
 }
 
 function read<T>(key: string, fallback: T): T {

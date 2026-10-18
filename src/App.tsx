@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { Consult } from './screens/Consult'
 import { Home } from './screens/Home'
+import { Review } from './screens/Review'
 import { Rooms } from './screens/Rooms'
 import { applyConsult } from './growth'
-import { recordLogin } from './login'
 import { addRecord, loadPetState, savePetState } from './storage'
 import type { Answer, PetState } from './types'
 
-type Screen = 'home' | 'consult' | 'rooms'
+type Screen = 'home' | 'consult' | 'rooms' | 'review'
 
 function newId() {
   return typeof crypto !== 'undefined' && 'randomUUID' in crypto
@@ -18,12 +18,7 @@ function newId() {
 // GitHub Pages では直接URLを開くと404になりやすいため、ルーターは使わず状態で画面を切り替える
 export function App() {
   const [screen, setScreen] = useState<Screen>('home')
-  const [pet, setPet] = useState(() => {
-    const loaded = loadPetState()
-    const next = recordLogin(loaded)
-    if (next !== loaded) savePetState(next)
-    return next
-  })
+  const [pet, setPet] = useState(loadPetState)
 
   const updatePet = (next: PetState) => {
     savePetState(next)
@@ -39,6 +34,9 @@ export function App() {
 
   if (screen === 'consult') {
     return <Consult pet={pet} onFinish={onFinishConsult} onDone={() => setScreen('home')} />
+  }
+  if (screen === 'review') {
+    return <Review pet={pet} onDone={() => setScreen('home')} />
   }
   if (screen === 'rooms') {
     return (
@@ -58,6 +56,7 @@ export function App() {
       onChangePet={updatePet}
       onConsult={() => setScreen('consult')}
       onRooms={() => setScreen('rooms')}
+      onReview={() => setScreen('review')}
     />
   )
 }

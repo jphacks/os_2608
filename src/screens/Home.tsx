@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { PointerEvent } from 'react'
 import { DevPanel } from '../components/DevPanel'
 import { HouseIcon } from '../components/HouseIcon'
+import { ChartIcon } from '../components/ChartIcon'
 import { LevelGauge } from '../components/LevelGauge'
 import { PixelHeart } from '../components/PixelHeart'
 import { Pet } from '../components/Pet'
@@ -17,6 +18,7 @@ type Props = {
   onChangePet: (pet: PetState) => void
   onConsult: () => void
   onRooms: () => void
+  onReview: () => void
 }
 
 // 「ようすを見る」ボタンは今は出さない（後で使う）。true にするとボタンが戻る
@@ -28,7 +30,7 @@ const STROKES_PER_PAT = 4
 // なでてから親密度ゲージを消すまでの時間
 const AFFECTION_HIDE_MS = 2000
 
-export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
+export function Home({ pet, onChangePet, onConsult, onRooms, onReview }: Props) {
   const [lines, setLines] = useState<string[]>([greeting])
   const [expression, setExpression] = useState<Expression>('normal')
   // 親密度ゲージはなでたときだけ表示する
@@ -121,11 +123,9 @@ export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
         <div className="topbar-gauge" onClick={onGaugeTap}>
           <LevelGauge experience={pet.experience} level={pet.level} />
         </div>
-        <div className="login-days" aria-label="合計ログイン日数">
-          ログイン
-          <br />
-          {pet.loginDays}日
-        </div>
+        <button className="icon-button" onClick={onReview} aria-label="ふりかえり">
+          <ChartIcon />
+        </button>
       </header>
 
       <div
