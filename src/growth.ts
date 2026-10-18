@@ -3,8 +3,6 @@ import type { Answer, Category, Level, PetState, StressType } from './types'
 
 // 出来事を1つ選ぶごとに +1。この数たまるとレベルが1つ上がる
 export const POINTS_PER_LEVEL = 30
-// デモ段階の上限レベル
-export const MAX_LEVEL: Level = 3
 
 // 出来事 → 4系統の仮の対応。ヒカゲさんの対応表ができたら差し替える。
 // 「今日は大丈夫だった」は系統に数えない（レベルには数える）。化学に当たる選択肢は、いまは無い
@@ -17,18 +15,17 @@ const categoryTypes: Record<Category, StressType | undefined> = {
 }
 
 export function levelFor(points: number): Level {
-  return Math.min(1 + Math.floor(points / POINTS_PER_LEVEL), MAX_LEVEL) as Level
+  return 1 + Math.floor(points / POINTS_PER_LEVEL)
 }
 
-// いまのレベルのゲージの進み具合（0〜1）。上限レベルでは満タン
+// いまのレベルのゲージの進み具合（0〜1）
 export function levelRatio(points: number): number {
-  if (levelFor(points) >= MAX_LEVEL) return 1
   return (points % POINTS_PER_LEVEL) / POINTS_PER_LEVEL
 }
 
-// 次のレベルまでのゲージの値（例: 4 / 30）。上限レベルでは undefined
-export function levelProgress(points: number): number | undefined {
-  return levelFor(points) >= MAX_LEVEL ? undefined : points % POINTS_PER_LEVEL
+// 次のレベルまでのゲージの値（例: 4 / 30）
+export function levelProgress(points: number): number {
+  return points % POINTS_PER_LEVEL
 }
 
 // いちばん多く数えた系統。同数なら、直近に数えたものを選ぶ。1つも無ければ undefined
@@ -62,7 +59,7 @@ export function applyConsult(pet: PetState, answers: Answer[]): ConsultResult {
   const level = levelFor(experience)
   const bond = consultAffection(pet.affection)
   const next: PetState = { ...pet, experience, stats, recentTypes, level, affection: bond.affection }
-  // 見た目の差分は、進化するたび（Lv1→2、Lv2→3）に、そのときの累計で最多の傾向で決め直す
+  // 見た目の差分は、レベルが上がるたび（Lv1→2、Lv2→3、Lv4以降も）に、そのときの累計で最多の傾向で決め直す
   if (level > pet.level && level >= 2) next.branch = trendOf(next) ?? pet.branch
   return { pet: next, gained: answers.length, leveledUp: level > pet.level, roomUnlocked: bond.leveledUp }
 }
