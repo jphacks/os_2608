@@ -40,8 +40,10 @@ export type PetState = {
   stats: StressStats
   // 系統を数えた順（新しいほど後ろ）。最多が同数のとき、直近のものを選ぶのに使う
   recentTypes: StressType[]
-  // 見た目の系統。進化するたび（Lv1→2、Lv2→3）に、そのときの累計で最多の傾向で決め直す。傾向が無ければ未設定
+  // 見た目の色（系統）。進化した瞬間（Lv1→2、Lv2→3）と、1日1回（アプリを開いたとき）に、累計点数の割合でくじ引きして決める。点数が無ければ未設定
   branch?: StressType
+  // 最後に色をくじ引きした日（端末の日付 YYYY-MM-DD）
+  branchDate?: string
   affection: Affection
   // いま表示しているお部屋
   roomId: string
