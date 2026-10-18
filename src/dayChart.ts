@@ -20,8 +20,9 @@ export type DayPoint = {
   types: StressType[]
 }
 
-// 「今日はいいことがあった」は、固定の選択肢として別に追加される（category が 'good_day'）
-const isGoodDay = (a: Answer) => (a.category as string | undefined) === 'good_day'
+// 「今日はいいことがあった」は、固定の選択肢として別に追加される（category が 'good_thing'）。
+// 古い「今日は大丈夫だった」('good_day') の記録も「いいこと」として扱う
+const isGoodDay = (a: Answer) => ['good_thing', 'good_day'].includes(a.category as string)
 
 const answerType = (a: Answer): StressType | undefined => a.type ?? (a.category ? categoryTypes[a.category] : undefined)
 
