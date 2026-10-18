@@ -9,7 +9,7 @@ import { Pet } from '../components/Pet'
 import { SpeechBubble } from '../components/SpeechBubble'
 import { AffectionGauge } from '../components/AffectionGauge'
 import { pat } from '../affection'
-import { greeting, lookLine, petLimitLine, petLine, roomUnlockedLine } from '../dialogue'
+import { greeting, lookLine, petLimitLine, petLine, playerCallName, roomUnlockedLine } from '../dialogue'
 import { findRoom } from '../rooms'
 import type { Expression, PetState } from '../types'
 
@@ -31,7 +31,8 @@ const STROKES_PER_PAT = 4
 const AFFECTION_HIDE_MS = 2000
 
 export function Home({ pet, onChangePet, onConsult, onRooms, onReview }: Props) {
-  const [lines, setLines] = useState<string[]>([greeting])
+  const callName = playerCallName(pet.level, pet.playerName)
+  const [lines, setLines] = useState<string[]>([greeting(callName)])
   const [expression, setExpression] = useState<Expression>('normal')
   // 親密度ゲージはなでたときだけ表示する
   const [showAffection, setShowAffection] = useState(false)
@@ -72,7 +73,7 @@ export function Home({ pet, onChangePet, onConsult, onRooms, onReview }: Props) 
       setExpression('normal')
       return
     }
-    setLines(result.leveledUp ? [petLine, roomUnlockedLine] : [petLine])
+    setLines(result.leveledUp ? [petLine(callName), roomUnlockedLine] : [petLine(callName)])
     setExpression('happy')
     setHeartKey((k) => k + 1)
   }

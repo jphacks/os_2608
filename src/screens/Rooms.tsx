@@ -1,19 +1,24 @@
 import { useState } from 'react'
 import { SpeechBubble } from '../components/SpeechBubble'
-import { affectionLevel, gaugeRatio } from '../affection'
+import { NAME_UNLOCK_LEVEL, affectionLevel, gaugeRatio } from '../affection'
+import { PLAYER_NAME_MAX, playerCallName } from '../dialogue'
 import { rooms } from '../rooms'
 import type { PetState } from '../types'
 
 type Props = {
   pet: PetState
   onSelect: (roomId: string) => void
+  onRename: (name: string) => void
   onDone: () => void
 }
 
-export function Rooms({ pet, onSelect, onDone }: Props) {
+export function Rooms({ pet, onSelect, onRename, onDone }: Props) {
   const level = affectionLevel(pet.affection.pats)
   const [previewId, setPreviewId] = useState(pet.roomId)
   const ratio = gaugeRatio(pet.affection.pats)
+  const nameUnlocked = level >= NAME_UNLOCK_LEVEL
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState(pet.playerName ?? '')
   return (
     <main className={`screen rooms room ${previewId}`}>
       <div className="rooms-veil" aria-hidden="true" />
@@ -57,6 +62,34 @@ export function Rooms({ pet, onSelect, onDone }: Props) {
       <button className="primary" disabled={previewId === pet.roomId} onClick={() => onSelect(previewId)}>
         このお部屋にする
       </button>
+      {editing ? (
+        <form
+          className="name-form"
+          onSubmit={(e) => {
+            e.preventDefault()
+            onRename(draft.trim())
+            setEditing(false)
+          }}
+        >
+          <label>
+            キミのことを、なんて呼ぼうか？
+            <input
+              value={draft}
+              maxLength={PLAYER_NAME_MAX}
+              placeholder={playerCallName(pet.level)}
+              onChange={(e) => setDraft(e.target.value)}
+            />
+          </label>
+          <button className="primary" type="submit">
+            保存する
+          </button>
+        </form>
+      ) : (
+        <button disabled={!nameUnlocked} onClick={() => setEditing(true)}>
+          呼び方をかえる
+          {!nameUnlocked && `（なかよしLv ${NAME_UNLOCK_LEVEL} で開く）`}
+        </button>
+      )}
       <button className="link" onClick={onDone}>
         ホームへ戻る
       </button>
