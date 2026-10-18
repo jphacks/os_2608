@@ -468,11 +468,34 @@ button:disabled {
   pointer-events: none;
 }
 
-/* お部屋選択画面: 全体を下げて、上にゲージとプレビューを置く */
+/* お部屋選択画面: 全体にお部屋の背景を敷き、弱めの白いぼかしをかける */
 .screen.rooms {
+  position: relative;
+  border: none;
+  min-height: 100dvh;
   padding-top: 72px;
+  align-items: stretch;
+  justify-content: flex-start;
 }
 
-.room-preview {
-  min-height: 160px;
+.rooms-veil {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(3px);
+  pointer-events: none;
+}
+
+.screen.rooms > *:not(.rooms-veil) {
+  position: relative;
+}
+
+.screen.rooms .link {
+  align-self: center;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.screen.rooms .room-item:disabled {
+  opacity: 0.85;
 }
