@@ -20,8 +20,8 @@ export async function analyzeText(text: string): Promise<TextResult> {
   })
   if (!res.ok) throw new Error(`consult api failed: ${res.status}`)
   const data = (await res.json()) as ApiResponse
-  if (data.result === 'not_stress') return { kind: 'not_stress' }
-  if (data.result === 'good_day') return { kind: 'answers', answers: [{ category: 'good_day' }] }
+  // 「今日は大丈夫だった」のような、つらいことが無かった内容は、ストレスの話ではないものとして扱う
+  if (data.result === 'not_stress' || data.result === 'good_day') return { kind: 'not_stress' }
   if (!data.items?.length) throw new Error('consult api returned no items')
   return { kind: 'answers', answers: data.items.map(({ type, intensity }) => ({ type, intensity })) }
 }

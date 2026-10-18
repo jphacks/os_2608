@@ -5,7 +5,14 @@ import { Pet } from '../components/Pet'
 import { SpeechBubble } from '../components/SpeechBubble'
 import {
   categoryConfirm,
-  categoryOptions,
+  choiceAddLabel,
+  choiceCancelLabel,
+  choiceDeleteLabel,
+  choiceEditLabel,
+  choiceErrorLine,
+  choiceNotStressLine,
+  choiceOkLabel,
+  choicePlaceholder,
   categoryQuestion,
   intensityOptions,
   intensityQuestion,
@@ -20,9 +27,11 @@ import {
   textWaitingLine,
   textWarning,
 } from '../dialogue'
+import { PixelIcon } from '../components/PixelIcon'
+import { CHOICE_MAX, loadChoices, saveChoices, type Choice } from '../choices'
 import { analyzeText, consultApiUrl } from '../gemini'
 import type { ConsultResult } from '../growth'
-import type { Answer, Category, Intensity, PetState } from '../types'
+import type { Answer, Intensity, PetState } from '../types'
 
 type Props = {
   pet: PetState
@@ -31,13 +40,16 @@ type Props = {
   onDone: () => void
 }
 
+const NEW = 'new'
+
 type Step = 'category' | 'intensity' | 'response'
 
 export function Consult({ pet: current, onFinish, onDone }: Props) {
   const [step, setStep] = useState<Step>('category')
-  const [selected, setSelected] = useState<Category[]>([])
+  const [choices, setChoices] = useState<Choice[]>(loadChoices)
+  const [selected, setSelected] = useState<string[]>([])
   // 選んだ出来事ごとのつらさ
-  const [intensities, setIntensities] = useState<Partial<Record<Category, Intensity>>>({})
+  const [intensities, setIntensities] = useState<Partial<Record<string, Intensity>>>({})
   const [answers, setAnswers] = useState<Answer[]>([])
   const [result, setResult] = useState<ConsultResult>()
   // 文章での相談: 入力中の文章、判定中か、判定のあとにペットが言う台詞
@@ -69,13 +81,51 @@ export function Consult({ pet: current, onFinish, onDone }: Props) {
     }
   }
 
-  const toggle = (value: Category) =>
-    setSelected((chosen) => {
-      if (chosen.includes(value)) return chosen.filter((c) => c !== value)
-      // 「今日は大丈夫だった」は、他のストレスとは一緒に選べない
-      if (value === 'good_day') return ['good_day']
-      return [...chosen.filter((c) => c !== 'good_day'), value]
-    })
+  const toggle = (value: string) =>
+    setSelected((chosen) => (chosen.includes(value) ? chosen.filter((c) => c !== value) : [...chosen, value]))
+
+  // 選択肢の編集。editing は編集中の選択肢の id（追加のときは NEW）
+  const [editing, setEditing] = useState<string>()
+  const [draft, setDraft] = useState('')
+  const [judging, setJudging] = useState(false)
+  const [editNotice, setEditNotice] = useState<string>()
+
+  const startEdit = (id: string, label: string) => {
+    setEditing(id)
+    setDraft(label)
+    setEditNotice(undefined)
+  }
+  const stopEdit = () => {
+    setEditing(undefined)
+    setEditNotice(undefined)
+  }
+  const updateChoices = (next: Choice[]) => {
+    setChoices(next)
+    saveChoices(next)
+  }
+  const removeChoice = (id: string) => {
+    updateChoices(choices.filter((c) => c.id !== id))
+    setSelected((chosen) => chosen.filter((c) => c !== id))
+  }
+  // 確定したときに一度だけ Gemini で判定し、その結果を選択肢に保存する（2回目以降は使い回す）
+  const confirmEdit = async () => {
+    const label = draft.trim()
+    const current = choices.find((c) => c.id === editing)
+    if (current && current.label === label) return stopEdit()
+    setJudging(true)
+    setEditNotice(undefined)
+    try {
+      const analyzed = await analyzeText(label)
+      if (analyzed.kind === 'not_stress') return setEditNotice(choiceNotStressLine)
+      const choice: Choice = { id: current?.id ?? `custom-${Date.now()}`, label, answers: analyzed.answers }
+      updateChoices(current ? choices.map((c) => (c.id === current.id ? choice : c)) : [...choices, choice])
+      stopEdit()
+    } catch {
+      setEditNotice(choiceErrorLine)
+    } finally {
+      setJudging(false)
+    }
+  }
 
   if (step === 'response' && result) {
     const { pet, leveledUp, roomUnlocked } = result
@@ -93,6 +143,39 @@ export function Consult({ pet: current, onFinish, onDone }: Props) {
       </main>
     )
   }
+
+  const chosen = choices.filter((c) => selected.includes(c.id))
+  // つらさを聞く選択肢（最初の4つ）と、判定済みの答えをそのまま使う選択肢（追加・編集したもの）
+  const asked = chosen.filter((c) => c.category && !c.answers)
+  const fixedAnswers = chosen.flatMap((c) => c.answers ?? [])
+
+  const editRow = (id: string) => (
+    <div key={id} className="choice-edit">
+      <div className="choice-row">
+        <input
+          type="text"
+          value={draft}
+          maxLength={CHOICE_MAX}
+          placeholder={choicePlaceholder}
+          disabled={judging}
+          autoFocus
+          onChange={(e) => setDraft(e.target.value)}
+        />
+        <button
+          className="icon-button"
+          aria-label={choiceOkLabel}
+          disabled={judging || draft.trim() === ''}
+          onClick={confirmEdit}
+        >
+          <PixelIcon name="check" />
+        </button>
+        <button className="icon-button" aria-label={choiceCancelLabel} disabled={judging} onClick={stopEdit}>
+          <PixelIcon name="cross" />
+        </button>
+      </div>
+      {judging ? <p className="note">{textWaitingLine}</p> : editNotice && <p className="note">{editNotice}</p>}
+    </div>
+  )
 
   return (
     <main className="screen consult">
@@ -121,24 +204,48 @@ export function Consult({ pet: current, onFinish, onDone }: Props) {
       )}
       <div className="choices">
         {step === 'category' &&
-          categoryOptions.map((o) => (
-            <button
-              key={o.value}
-              className="check"
-              role="checkbox"
-              aria-checked={selected.includes(o.value)}
-              onClick={() => toggle(o.value)}
-            >
-              <span className="box" aria-hidden="true">
-                {selected.includes(o.value) ? '■' : '□'}
-              </span>
-              {o.label}
+          choices.map((o) =>
+            editing === o.id ? (
+              editRow(o.id)
+            ) : (
+              <div key={o.id} className="choice-row">
+                <button
+                  className="check"
+                  role="checkbox"
+                  aria-checked={selected.includes(o.id)}
+                  onClick={() => toggle(o.id)}
+                >
+                  <span className="box" aria-hidden="true">
+                    {selected.includes(o.id) ? '■' : '□'}
+                  </span>
+                  {o.label}
+                </button>
+                {consultApiUrl && (
+                  <>
+                    <button className="icon-button" aria-label={choiceEditLabel} onClick={() => startEdit(o.id, o.label)}>
+                      <PixelIcon name="pencil" />
+                    </button>
+                    <button className="icon-button" aria-label={choiceDeleteLabel} onClick={() => removeChoice(o.id)}>
+                      <PixelIcon name="trash" />
+                    </button>
+                  </>
+                )}
+              </div>
+            ),
+          )}
+        {step === 'category' &&
+          consultApiUrl &&
+          (editing === NEW ? (
+            editRow(NEW)
+          ) : (
+            <button className="add-choice" aria-label={choiceAddLabel} onClick={() => startEdit(NEW, '')}>
+              <PixelIcon name="plus" size={28} />
             </button>
           ))}
         {step === 'intensity' &&
-          selected.map((category) => (
+          asked.map((c) => c.id).map((category) => (
             <fieldset key={category} className="intensity-row">
-              <legend>{categoryOptions.find((o) => o.value === category)?.label}</legend>
+              <legend>{choices.find((o) => o.id === category)?.label}</legend>
               <div className="intensity-options" role="radiogroup">
                 {intensityOptions.map((o) => (
                   <button
@@ -159,8 +266,8 @@ export function Consult({ pet: current, onFinish, onDone }: Props) {
           className="primary"
           disabled={selected.length === 0}
           onClick={() => {
-            // 「今日は大丈夫だった」だけのときは、つらさを聞かない
-            if (selected.every((c) => c === 'good_day')) finish(selected.map((category) => ({ category })))
+            // 追加・編集した選択肢は判定済みなので、つらさを聞くのは最初の選択肢だけ
+            if (asked.length === 0) finish(fixedAnswers)
             else setStep('intensity')
           }}
         >
@@ -170,8 +277,13 @@ export function Consult({ pet: current, onFinish, onDone }: Props) {
       {step === 'intensity' && (
         <button
           className="primary"
-          disabled={selected.some((c) => !intensities[c])}
-          onClick={() => finish(selected.map((category) => ({ category, intensity: intensities[category] })))}
+          disabled={asked.some((c) => !intensities[c.id])}
+          onClick={() =>
+            finish([
+              ...fixedAnswers,
+              ...asked.map((c) => ({ category: c.category, intensity: intensities[c.id] })),
+            ])
+          }
         >
           {categoryConfirm}
         </button>
