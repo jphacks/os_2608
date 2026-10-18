@@ -5,7 +5,8 @@ import { HouseIcon } from '../components/HouseIcon'
 import { LevelGauge } from '../components/LevelGauge'
 import { Pet } from '../components/Pet'
 import { SpeechBubble } from '../components/SpeechBubble'
-import { affectionLevel, gaugeRatio, pat } from '../affection'
+import { AffectionGauge } from '../components/AffectionGauge'
+import { pat } from '../affection'
 import { greeting, lookLine, petLimitLine, petLine, roomUnlockedLine } from '../dialogue'
 import { findRoom } from '../rooms'
 import type { Expression, PetState } from '../types'
@@ -108,7 +109,6 @@ export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
     if (!gaugeVisible.current) setPetting(false)
   }
 
-  const level = affectionLevel(pet.affection.pats)
   const room = findRoom(pet.roomId)
 
   return (
@@ -135,21 +135,7 @@ export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
         onPointerCancel={onPointerEnd}
       >
         {showAffection && (
-          <section className="status affection" aria-label="なかよしゲージ">
-            <div className="status-row">
-              <span className="level">なかよし Lv {level}</span>
-              <span className="exp-label">♥</span>
-            </div>
-            <div
-              className="exp-bar"
-              role="progressbar"
-              aria-valuenow={Math.round(gaugeRatio(pet.affection.pats) * 100)}
-              aria-valuemin={0}
-              aria-valuemax={100}
-            >
-              <div className="exp-fill heart" style={{ width: `${gaugeRatio(pet.affection.pats) * 100}%` }} />
-            </div>
-          </section>
+          <AffectionGauge pats={pet.affection.pats} />
         )}
         <SpeechBubble lines={lines} />
         <Pet level={pet.level} branch={pet.branch} expression={expression} />

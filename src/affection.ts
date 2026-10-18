@@ -6,6 +6,9 @@ export const PATS_PER_LEVEL = 7
 // 1日になでられる回数
 export const MAX_PATS_PER_DAY = 3
 
+// 相談を1回すると、なでる1回の1/4ぶん上がる（1日の上限なし）
+export const CONSULT_PATS = 0.25
+
 export const maxAffectionLevel = rooms.length
 
 export function affectionLevel(pats: number): number {
@@ -38,6 +41,15 @@ export function pat(current: Affection, now = new Date()): PatResult {
   return {
     kind: 'ok',
     affection: { pats, patsToday: patsToday + 1, lastPatDate: today },
+    leveledUp: affectionLevel(pats) > affectionLevel(current.pats),
+  }
+}
+
+// 相談を終えたときの親密度。なでる回数の上限や日付には影響しない
+export function consultAffection(current: Affection): { affection: Affection; leveledUp: boolean } {
+  const pats = current.pats + CONSULT_PATS
+  return {
+    affection: { ...current, pats },
     leveledUp: affectionLevel(pats) > affectionLevel(current.pats),
   }
 }
