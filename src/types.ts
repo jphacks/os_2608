@@ -1,5 +1,5 @@
 // 出来事カテゴリ（相談の「どうしたの？」の選択肢と1対1）
-export type Category = 'commute' | 'task' | 'relationships' | 'tired'
+export type Category = 'commute' | 'task' | 'relationships' | 'tired' | 'good_thing'
 
 // つらさの強さ。選んだ出来事ごとに答える（追加・編集した選択肢は、判定済みなので聞かない）
 export type Intensity = 1 | 2 | 3
