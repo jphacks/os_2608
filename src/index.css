@@ -453,3 +453,17 @@ button:disabled {
   background: var(--panel);
   z-index: 10;
 }
+
+/* なでている間は、ゲージ・ボタン・台詞をフェードアウトして、ハートと親密度ゲージだけを見せる */
+.home .topbar,
+.home .home-bottom,
+.home .bubble-wrap {
+  transition: opacity 0.3s ease;
+}
+
+.home.petting .topbar,
+.home.petting .home-bottom,
+.home.petting .bubble-wrap {
+  opacity: 0;
+  pointer-events: none;
+}
