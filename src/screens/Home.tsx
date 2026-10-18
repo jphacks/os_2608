@@ -3,6 +3,7 @@ import type { PointerEvent } from 'react'
 import { DevPanel } from '../components/DevPanel'
 import { HouseIcon } from '../components/HouseIcon'
 import { LevelGauge } from '../components/LevelGauge'
+import { PixelHeart } from '../components/PixelHeart'
 import { Pet } from '../components/Pet'
 import { SpeechBubble } from '../components/SpeechBubble'
 import { AffectionGauge } from '../components/AffectionGauge'
@@ -141,9 +142,15 @@ export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
         <Pet level={pet.level} branch={pet.branch} expression={expression} />
         {heartKey > 0 && (
           <div className="hearts" key={heartKey} aria-hidden="true">
-            <span>♥</span>
-            <span>♥</span>
-            <span>♥</span>
+            <span>
+              <PixelHeart />
+            </span>
+            <span>
+              <PixelHeart />
+            </span>
+            <span>
+              <PixelHeart />
+            </span>
           </div>
         )}
       </div>
