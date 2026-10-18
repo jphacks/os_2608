@@ -42,7 +42,7 @@ export function Rooms({ pet, onSelect, onRename, onTutorial, onDone }: Props) {
           <div className="exp-fill heart" style={{ width: `${ratio * 100}%` }} />
         </div>
       </section>
-      <SpeechBubble lines={['どのお部屋にいようか？']} />
+      <SpeechBubble lines={['どのお部屋に行く？']} />
       <ul className="room-list">
         {rooms.map((room) => {
           const unlocked = level >= room.unlockLevel
