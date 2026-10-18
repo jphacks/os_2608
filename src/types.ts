@@ -18,7 +18,8 @@ export type StressRecord = {
   answers: Answer[]
 }
 
-export type Level = 1 | 2 | 3
+// レベルに上限は無い。絵はLv3（第3段階）までで、Lv4以降は色だけが変わる
+export type Level = number
 
 // 能力値は4分類のストレスごとの内部パラメータ（画面には出さない）。
 // 相談で選んだ出来事を4分類のどれかに振り分けて数え、その多い系統（傾向）が進化の見た目を決める

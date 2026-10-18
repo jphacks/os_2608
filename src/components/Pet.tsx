@@ -6,7 +6,11 @@ const images = import.meta.glob<string>('../assets/pet/*.{svg,png}', { eager: tr
 const lookup = (name: string) => images[`../assets/pet/${name}.png`] ?? images[`../assets/pet/${name}.svg`]
 
 // 進化後は系統ごとの絵（lv2-physical-happy など）。無ければ共通の絵、表情が無ければ通常の絵に切り替える
+// 絵は第3段階（Lv3）まで。Lv4以降はLv3の姿のまま、色（系統）だけが変わる
+const MAX_STAGE = 3
+
 function findImage(level: Level, branch: StressType | undefined, expression: Expression): string | undefined {
+  level = Math.min(level, MAX_STAGE)
   const bases = branch && level >= 2 ? [`lv${level}-${branch}`, `lv${level}`] : [`lv${level}`]
   for (const base of bases) {
     const found = lookup(`${base}-${expression}`) ?? lookup(`${base}-normal`)
