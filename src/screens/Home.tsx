@@ -33,7 +33,10 @@ export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
   const [showAffection, setShowAffection] = useState(false)
   // ハートを出し直すたびに key を変えて、アニメーションを最初から再生する
   const [heartKey, setHeartKey] = useState(0)
+  // なでている間は、ほかのUIを隠して、ハートと親密度ゲージだけを見せる
+  const [petting, setPetting] = useState(false)
   const hideTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const gaugeVisible = useRef(false)
   // 別の画面に移るときは、残っているタイマーを止める
   useEffect(() => () => clearTimeout(hideTimer.current), [])
   // 開発者モード: レベルゲージを5回続けてタップすると開く
@@ -52,9 +55,14 @@ export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
     const result = pat(pet.affection)
     onChangePet({ ...pet, affection: result.affection })
     setShowAffection(true)
-    // 2秒以内にまたなでたら、そこから数え直す
+    gaugeVisible.current = true
+    // 2秒以内にまたなでたら、そこから数え直す。ゲージが消えるとき、指が離れていればほかのUIも戻す
     clearTimeout(hideTimer.current)
-    hideTimer.current = setTimeout(() => setShowAffection(false), AFFECTION_HIDE_MS)
+    hideTimer.current = setTimeout(() => {
+      gaugeVisible.current = false
+      setShowAffection(false)
+      if (!swipe.current.active) setPetting(false)
+    }, AFFECTION_HIDE_MS)
     if (result.kind === 'limit') {
       setLines([petLimitLine])
       setExpression('normal')
@@ -82,6 +90,7 @@ export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
     if (!s.active || s.done) return
     const dx = e.clientX - s.anchorX
     if (Math.abs(dx) < STROKE_DISTANCE) return
+    setPetting(true)
     const direction = Math.sign(dx)
     if (direction !== s.direction) {
       s.direction = direction
@@ -95,13 +104,15 @@ export function Home({ pet, onChangePet, onConsult, onRooms }: Props) {
   }
   const onPointerEnd = () => {
     swipe.current.active = false
+    // ゲージが出ていなければ（親密度が増えなかったとき）、すぐ戻す。出ていれば、ゲージが消えるときに戻る
+    if (!gaugeVisible.current) setPetting(false)
   }
 
   const level = affectionLevel(pet.affection.pats)
   const room = findRoom(pet.roomId)
 
   return (
-    <main className={`screen home room ${room.id}`}>
+    <main className={`screen home room ${room.id}${petting ? ' petting' : ''}`}>
       <header className="topbar">
         <button className="icon-button" onClick={onRooms} aria-label="おへやをえらぶ">
           <HouseIcon />
