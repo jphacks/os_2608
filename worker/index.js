@@ -80,7 +80,11 @@ export default {
         generationConfig: { responseMimeType: 'application/json', responseSchema: SCHEMA, temperature: 0 },
       }),
     })
-    if (!res.ok) return json({ error: 'upstream failed' }, 502)
+    if (!res.ok) {
+      // 原因を調べられるよう、Gemini が返したエラーの内容を記録する（APIキーは含まれない）
+      console.error('gemini failed', res.status, (await res.text()).slice(0, 500))
+      return json({ error: 'upstream failed' }, 502)
+    }
 
     // Gemini の返事を確かめてから、アプリに必要な形だけ返す
     try {
@@ -90,7 +94,8 @@ export default {
       const items = (parsed.items ?? []).filter((i) => TYPES.includes(i.type) && [1, 2, 3].includes(i.intensity))
       if (parsed.result !== 'stress' || items.length === 0) return json({ error: 'unexpected response' }, 502)
       return json({ result: 'stress', items })
-    } catch {
+    } catch (e) {
+      console.error('unexpected response', String(e))
       return json({ error: 'unexpected response' }, 502)
     }
   },
